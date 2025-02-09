@@ -1,15 +1,16 @@
-import { fetchTransactions } from "@/lib/data";
-
+import { Suspense } from "react";
 import TransactionTable from "@/components/dashboard/transaction-table";
 
-export default async function Page() {
-  const transactions = await fetchTransactions();
+import { TransactionTableSkeleton } from "@/components/skeletons";
 
+export default async function Page() {
   return (
     <main>
       <h1>Dashboard</h1>
       <div>
-        <TransactionTable transactions={transactions}/>
+        <Suspense fallback={<TransactionTableSkeleton />}>
+          <TransactionTable />
+        </Suspense>
       </div>
     </main>
   );

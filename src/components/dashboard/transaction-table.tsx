@@ -1,8 +1,7 @@
-"use client";
+import { GridColDef } from "@mui/x-data-grid";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
-import { Transaction } from "@/lib/definitions";
+import ClientDataGrid from "@/components/dashboard/data-grid.client";
+import { fetchTransactions } from "@/lib/data";
 
 const columns: GridColDef[] = [
   { field: "category", headerName: "Category", width: 130 },
@@ -26,24 +25,16 @@ const columns: GridColDef[] = [
     sortable: false,
   },
 ];
-
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function TransactionTable({
-  transactions,
-}: {
-  transactions: Transaction[];
-}) {
-  const rows = transactions;
+export default async function TransactionTable() {
+  const transactions = await fetchTransactions();
 
   return (
-    <DataGrid
-      rows={rows}
+    <ClientDataGrid
+      rows={transactions}
       columns={columns}
-      initialState={{ pagination: { paginationModel } }}
-      pageSizeOptions={[5, 10]}
-      checkboxSelection
-      sx={{ border: 0 }}
+      paginationModel={paginationModel}
     />
   );
 }
