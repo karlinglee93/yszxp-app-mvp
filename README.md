@@ -34,3 +34,8 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Techniques
+
+- [dbdiagram.io Home](https://dbdiagram.io) - Draw Database Entity-Relationship Diagrams Using DBML (Database Markup Language), Painlessly.
+- [App ERD Design](https://dbdocs.io/459607025/Yszxp) - My ERD Design for the App.
