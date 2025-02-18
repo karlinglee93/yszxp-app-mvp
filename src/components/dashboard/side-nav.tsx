@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Menu } from "antd";
 import {
   LineChartOutlined,
@@ -5,7 +6,6 @@ import {
   BankOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import Link from "next/link";
 
 const itemProps = [
   {
