@@ -1,13 +1,15 @@
 import BalanceCard from "@/components/dashboard/balance-card";
 import CategoryPieChart from "@/components/dashboard/category-pie-chart";
 import TransactionLineChart from "@/components/dashboard/transaction-line-chart";
+import TransactionList from "@/components/dashboard/transaction-list";
 import { fetchMonthlyTransactions } from "@/lib/data";
 import {
-  FormatedTransactioByDay,
+  FormatedTransactionByDay,
   FormatedTransactionByCategory,
 } from "@/lib/definitions";
 import { formatAmount } from "@/lib/utils";
 
+// TODO: add category color and avatar configs
 export default async function Page() {
   const monthlyTransactions = await fetchMonthlyTransactions();
   // Card data
@@ -22,7 +24,7 @@ export default async function Page() {
   }, 0);
   // Line chart data
   const curMonthExpenseByDayObj = monthlyTransactions.reduce<
-    Record<string, FormatedTransactioByDay>
+    Record<string, FormatedTransactionByDay>
   >((acc, transaction) => {
     const amount = parseFloat(transaction.amount);
     if (amount < 0) {
@@ -34,7 +36,7 @@ export default async function Page() {
     }
 
     return acc;
-  }, {} as Record<string, FormatedTransactioByDay>);
+  }, {} as Record<string, FormatedTransactionByDay>);
   const curMonthExpenseByDay = Object.values(curMonthExpenseByDayObj);
   // Pie chart data
   const curMonthExpenseByCategoryObj = monthlyTransactions.reduce<
@@ -52,6 +54,13 @@ export default async function Page() {
     return acc;
   }, {} as Record<string, FormatedTransactionByCategory>);
   const curMonthExpenseByCategory = Object.values(curMonthExpenseByCategoryObj);
+  // Latest expense list
+  const curMonthExpenseTransactions = monthlyTransactions.filter(
+    (transaction) => parseFloat(transaction.amount) < 0
+  );
+  const curMonthExpenseTransactionsSorted = curMonthExpenseTransactions.sort(
+    (a, b) => parseFloat(a.amount) - parseFloat(b.amount)
+  );
 
   return (
     <main>
@@ -61,6 +70,15 @@ export default async function Page() {
       />
       <TransactionLineChart datasource={curMonthExpenseByDay} isMonthChart />
       <CategoryPieChart datasource={curMonthExpenseByCategory} />
+      <TransactionList
+        datasource={curMonthExpenseTransactions}
+        displayCount={5}
+      />
+      &nbsp;&nbsp;
+      <TransactionList
+        datasource={curMonthExpenseTransactionsSorted}
+        displayCount={5}
+      />
     </main>
   );
 }

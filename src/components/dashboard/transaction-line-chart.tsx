@@ -1,5 +1,5 @@
 "use client";
-import { FormatedTransactioByDay } from "@/lib/definitions";
+import { FormatedTransactionByDay } from "@/lib/definitions";
 import {
   formatAmount,
   formatDate,
@@ -30,12 +30,11 @@ export default function TransactionLineChart({
   datasource,
   isMonthChart = true,
 }: {
-  datasource: FormatedTransactioByDay[];
+  datasource: FormatedTransactionByDay[];
   isMonthChart: boolean;
 }) {
   // TODO: enhance chart to support all date range, instead on monthly only
   if (!isMonthChart) return;
-
   const year = new Date(datasource[0].date).getFullYear();
   const month = new Date(datasource[0].date).getMonth();
   const startDate = getFirstDayOfMonth(year, month);
@@ -47,7 +46,7 @@ export default function TransactionLineChart({
     );
     return found
       ? found
-      : ({ date: formatDate(date), total: 0 } as FormatedTransactioByDay);
+      : ({ date: formatDate(date), total: 0 } as FormatedTransactionByDay);
   });
   const numberOfDays = datasource.length;
   const AverageDailyExpense =

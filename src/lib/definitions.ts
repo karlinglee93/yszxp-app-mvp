@@ -25,7 +25,7 @@ export type Category = {
   is_shared: boolean;
 };
 
-export interface FormatedTransactioByDay {
+export interface FormatedTransactionByDay {
   date: string;
   total: number;
 }

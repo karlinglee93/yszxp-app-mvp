@@ -1,6 +1,5 @@
 "use client";
 import { FormatedTransactionByCategory } from "@/lib/definitions";
-import { transactions } from "@/lib/placeholder-data";
 import { formatPercentage } from "@/lib/utils";
 import { Pie } from "@ant-design/charts";
 
