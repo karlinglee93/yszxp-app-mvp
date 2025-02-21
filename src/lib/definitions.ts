@@ -4,7 +4,7 @@ export type Transaction = {
   user_id: string;
   category_id: string;
   category_name: string;
-  created_at: string;
+  created_at: object;
   amount: string;
   ledger_id: string;
   ledger_name: string;
@@ -24,3 +24,13 @@ export type Category = {
   type: categoryType;
   is_shared: boolean;
 };
+
+export interface FormatedTransactioByDay {
+  date: string;
+  total: number;
+}
+
+export interface FormatedTransactionByCategory {
+  category: string;
+  total: number;
+}
