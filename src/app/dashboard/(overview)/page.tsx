@@ -8,7 +8,11 @@ import {
   FormatedTransactionByCategory,
 } from "@/lib/definitions";
 import { formatAmount } from "@/lib/utils";
+import { Col, Row } from "antd";
 
+// TODO: beauty layout
+// TODO: handle currency difference
+// TODO: add more cards, charts or lists
 // TODO: add category color and avatar configs
 export default async function Page() {
   const monthlyTransactions = await fetchMonthlyTransactions();
@@ -55,6 +59,7 @@ export default async function Page() {
   }, {} as Record<string, FormatedTransactionByCategory>);
   const curMonthExpenseByCategory = Object.values(curMonthExpenseByCategoryObj);
   // Latest expense list
+  // TODO: fix bug - shared object
   const curMonthExpenseTransactions = monthlyTransactions.filter(
     (transaction) => parseFloat(transaction.amount) < 0
   );
@@ -64,21 +69,41 @@ export default async function Page() {
 
   return (
     <main>
-      <BalanceCard
-        expense={formatAmount(monthlyExpense)}
-        income={formatAmount(monthlyIncome)}
-      />
-      <TransactionLineChart datasource={curMonthExpenseByDay} isMonthChart />
-      <CategoryPieChart datasource={curMonthExpenseByCategory} />
-      <TransactionList
-        datasource={curMonthExpenseTransactions}
-        displayCount={5}
-      />
-      &nbsp;&nbsp;
-      <TransactionList
-        datasource={curMonthExpenseTransactionsSorted}
-        displayCount={5}
-      />
+      <Row>
+        <Col span={12}>
+          <BalanceCard
+            expense={formatAmount(monthlyExpense)}
+            income={formatAmount(monthlyIncome)}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <TransactionLineChart
+            datasource={curMonthExpenseByDay}
+            isMonthChart
+          />
+        </Col>
+        <Col span={12}>
+          <CategoryPieChart datasource={curMonthExpenseByCategory} />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <TransactionList
+            title="Recent Spending"
+            datasource={curMonthExpenseTransactions}
+            displayCount={5}
+          />
+        </Col>
+        <Col span={12}>
+          <TransactionList
+            title="Lastest Spending Rankings"
+            datasource={curMonthExpenseTransactionsSorted}
+            displayCount={5}
+          />
+        </Col>
+      </Row>
     </main>
   );
 }

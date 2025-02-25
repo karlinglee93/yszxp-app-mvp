@@ -2,6 +2,7 @@
 import { FormatedTransactionByCategory } from "@/lib/definitions";
 import { formatPercentage } from "@/lib/utils";
 import { Pie } from "@ant-design/charts";
+import { Card } from "antd";
 
 export default function CategoryPieChart({
   datasource,
@@ -38,8 +39,10 @@ export default function CategoryPieChart({
   };
 
   return (
-    <main>
-      <Pie data={datasource} {...config} />
-    </main>
+    <>
+      <Card title="Spending Proportion Overview">
+        <Pie data={datasource} {...config} legend={false} height={222} />
+      </Card>
+    </>
   );
 }

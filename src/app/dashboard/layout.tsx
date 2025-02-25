@@ -8,7 +8,9 @@ const { Sider, Header, Footer, Content } = Layout;
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Layout>
-      <Sider width="25%"><SideNav/></Sider>
+      <Sider>
+        <SideNav />
+      </Sider>
       <Layout>
         <Header>Dashboard</Header>
         <Content>{children}</Content>

@@ -8,6 +8,7 @@ import {
   getLastDayOfMonth,
 } from "@/lib/utils";
 import { Line } from "@ant-design/charts";
+import { Card } from "antd";
 
 const config = {
   xField: "date",
@@ -54,11 +55,11 @@ export default function TransactionLineChart({
     numberOfDays;
 
   return (
-    <main>
+    <Card title="Spending Trend Overview">
       <label>
         Average Daily Spending This Month: {formatAmount(AverageDailyExpense)}
       </label>
-      <Line data={completedData} {...config} />
-    </main>
+      <Line height={200} data={completedData} {...config} />
+    </Card>
   );
 }
