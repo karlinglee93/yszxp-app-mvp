@@ -1,36 +1,109 @@
 import { db } from "@vercel/postgres";
 
-import { Transaction } from "./definitions";
+import { TransactionQueryParams } from "@/lib/definitions";
 
-async function fetchTransactions() {
+// TODO: fetch all data, fetch by sort, by order
+// TODO: add where user_id
+async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
   try {
-    const transactions = await db.sql<Transaction>`SELECT * FROM transactions`;
+    const {
+      startDate,
+      endDate,
+      transactionType = "all",
+      sortBy = "date",
+      orderBy = "ASC",
+      groupBy,
+      limit,
+    } = queryParams;
 
-    return transactions.rows;
+    // TODO: add user filter
+    const filters = [];
+    const initialParams = [];
+    if (startDate) {
+      filters.push(`t.created_at >= $${filters.length + 1}`);
+      initialParams.push(startDate);
+    }
+    if (endDate) {
+      filters.push(`t.created_at <= $${filters.length + 1}`);
+      initialParams.push(endDate);
+    }
+    if (transactionType) {
+      if (transactionType === "expense") {
+        filters.push(`t.amount < 0`);
+        // initialParams.push(`<`);
+      } else if (transactionType === "income") {
+        filters.push(`t.amount > 0`);
+        // initialParams.push(`>`);
+      }
+    }
+    const filterQuery =
+      filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
+
+    let query = "";
+    const allowedGroupBy = ["day", "category"];
+    const useGroupBy =
+      groupBy && allowedGroupBy.includes(groupBy) ? true : undefined;
+
+    const sortQuery =
+      sortBy === "date"
+        ? `ORDER BY DATE(t.created_at) ${orderBy}`
+        : sortBy === "amount"
+        ? useGroupBy
+          ? `ORDER BY total_amount ${orderBy}`
+          : `ORDER BY t.amount ${orderBy}`
+        : "";
+
+    const limitQuery = limit ? `LIMIT ${limit}` : "";
+
+    if (useGroupBy) {
+      let groupByName = "";
+      // TODO: add LIMIT and OFFSET
+      // TODO: !!!handle currency difference
+      if (groupBy === "day") {
+        groupByName = "t.created_at";
+        query = `SELECT DATE(${groupByName}) as ${groupBy}, sum(t.amount) as total_amount
+          FROM transactions t
+          JOIN users u ON t.user_id = u.user_id
+          JOIN currencies cur ON t.currency_id = cur.currency_id
+          JOIN ledgers l ON t.ledger_id = l.ledger_id
+          ${filterQuery}
+          GROUP BY DATE(${groupByName})
+          ${sortQuery}
+          ${limitQuery}`;
+      } else if (groupBy === "category") {
+        groupByName = "cat.category_name";
+        query = `SELECT ${groupByName} as ${groupBy}, sum(t.amount) as total_amount
+          FROM transactions t
+          JOIN users u ON t.user_id = u.user_id
+          JOIN currencies cur ON t.currency_id = cur.currency_id
+          JOIN categories cat ON cat.category_id = t.category_id
+          JOIN ledgers l ON t.ledger_id = l.ledger_id
+          ${filterQuery}
+          GROUP BY ${groupByName}
+          ${sortQuery}
+          ${limitQuery}`;
+      }
+    } else {
+      query = `SELECT t.created_at, u.user_name, l.ledger_name, cat.category_name, t.amount, cur.currency_name, t.description
+        FROM transactions t
+        JOIN users u ON t.user_id = u.user_id
+        JOIN currencies cur ON t.currency_id = cur.currency_id
+        JOIN categories cat ON t.category_id = cat.category_id
+        JOIN ledgers l ON t.ledger_id = l.ledger_id
+        ${filterQuery}
+        ${sortQuery}
+        ${limitQuery}`;
+    }
+
+    console.debug(`Query params: ${initialParams.join(", ")}`);
+    console.debug(`SQL: ${query}`);
+    const result = await db.query(query, initialParams);
+    // console.debug(`Results: ${result.rows}`)
+    return result.rows;
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch revenue data.");
+    throw new Error("Failed to fetch transaction data.");
   }
 }
 
-async function fetchMonthlyTransactions() {
-  try {
-    const transactions = await db.sql<Transaction>`
-      SELECT created_at, user_name, ledger_name, category_name, amount, currency_name, description
-      FROM transactions t
-      join users u on t.user_id = u.user_id
-      join currencies cur on t.currency_id = cur.currency_id
-      join categories cat on t.category_id = cat.category_id
-      join ledgers l on t.ledger_id = l.ledger_id
-      WHERE created_at >= date_trunc('month', CURRENT_DATE) AND (created_at <= date_trunc('month', CURRENT_DATE) + INTERVAL '1 month')
-      ORDER BY t.created_at DESC;
-    `;
-
-    return transactions.rows.sort();
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch revenue data.");
-  }
-}
-
-export { fetchTransactions, fetchMonthlyTransactions };
+export { fetchTransactions };

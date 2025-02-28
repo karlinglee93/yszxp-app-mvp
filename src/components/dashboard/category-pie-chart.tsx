@@ -1,48 +1,35 @@
-"use client";
-import { FormatedTransactionByCategory } from "@/lib/definitions";
-import { formatPercentage } from "@/lib/utils";
-import { Pie } from "@ant-design/charts";
+import ClientPieChart from "@/components/client/pie-chart";
+import { fetchTransactions } from "@/lib/data";
+import { Amount, TransactionQueryParams } from "@/lib/definitions";
+import { formatDate, getMonthFirstDate, getMonthLastDate } from "@/lib/utils";
 import { Card } from "antd";
 
-export default function CategoryPieChart({
-  datasource,
-}: {
-  datasource: FormatedTransactionByCategory[];
-}) {
-  const totalExpense = datasource.reduce(
-    (acc, transaction) => acc + transaction.total,
-    0
-  );
-  const config = {
-    angleField: "total",
-    colorField: "category",
-    radius: 0.8,
-    label: {
-      text: (transacation: FormatedTransactionByCategory) =>
-        `${transacation.category}  ${formatPercentage(
-          transacation.total / totalExpense
-        )}%`,
-      position: "spider",
-    },
-    legend: {
-      color: {
-        title: false,
-        position: "right",
-        rowPadding: 5,
-      },
-    },
-    tooltip: {
-      title: (transaction: FormatedTransactionByCategory) =>
-        `${transaction.category} Expense: `,
-      field: "total",
-    },
+export default async function CategoryPieChart() {
+  const year = new Date().getFullYear();
+  const monthIndex = new Date().getMonth();
+  const startDate = getMonthFirstDate(year, monthIndex);
+  const endDate = getMonthLastDate(year, monthIndex);
+  const query: Partial<TransactionQueryParams> = {
+    startDate: formatDate(startDate),
+    endDate: formatDate(endDate),
+    transactionType: "expense",
+    groupBy: "category",
+    sortBy: "amount",
   };
+  const amountsByCategory: Partial<Amount>[] = await fetchTransactions(query);
+
+  if (!Array.isArray(amountsByCategory)) {
+    console.error("Error fetching transactions:", amountsByCategory);
+    return;
+  }
 
   return (
-    <>
-      <Card title="Spending Proportion Overview">
-        <Pie data={datasource} {...config} legend={false} height={222} />
-      </Card>
-    </>
+    <Card title="Spending Proportion Overview">
+      <ClientPieChart
+        datasource={amountsByCategory}
+        legend={false}
+        height={222}
+      />
+    </Card>
   );
 }

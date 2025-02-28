@@ -40,6 +40,7 @@ const categoryIdTopUps = uuidv4();
 const categoryIdCash = uuidv4();
 const categoryIdSavings = uuidv4();
 
+// TODO: secret user pwd
 const users = [
   {
     user_id: userId,
