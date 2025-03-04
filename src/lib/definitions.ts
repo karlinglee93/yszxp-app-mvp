@@ -18,6 +18,7 @@ export interface Amount {
   total_amount: string;
   day: Date;
   category: string;
+  currency: string;
 }
 
 // DB Query Params
@@ -27,6 +28,13 @@ export interface TransactionQueryParams {
   transactionType: "expense" | "income" | "all";
   sortBy: "date" | "amount";
   orderBy: "ASC" | "DESC";
-  groupBy?: "day" | "category";
+  groupBy?: "day" | "category" | "currency";
   limit?: number;
+}
+
+export interface CurrencyRates {
+  provider: string;
+  base: string;
+  date: Date;
+  rates: object;
 }

@@ -255,7 +255,6 @@ const categories = [
 // Steps to convert raw data of transactions to standarded data:
 // 1. export transaction data from App
 // 2. import csv on https://jsoneditoronline.org
-// TODO: ensure income transaction should be positive value, expense one should be minus.
 const convertCurrencyToId = (currency: string) => {
   switch (currency) {
     case "欧元":

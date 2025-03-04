@@ -6,7 +6,7 @@ export default function ClientLineChart({
   config,
   isMonthChart = true,
 }: {
-  datasource: object[];
+  datasource: { day: number; total_amount: number }[];
   config: object;
   isMonthChart: boolean;
 }) {

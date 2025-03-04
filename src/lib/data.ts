@@ -1,8 +1,28 @@
 import { db } from "@vercel/postgres";
 
-import { TransactionQueryParams } from "@/lib/definitions";
+import { CurrencyRates, TransactionQueryParams } from "@/lib/definitions";
 
-// TODO: fetch all data, fetch by sort, by order
+async function fetchCurrencyRates(
+  currencyName: string
+): Promise<CurrencyRates> {
+  console.info("Fetching currency rates from API");
+  try {
+    const response = await fetch(
+      `https://api.exchangerate-api.com/v4/latest/${currencyName}`,
+      {
+        next: { revalidate: 3600 * 24 },
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch currency rates");
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch currency rates");
+  }
+}
+
 // TODO: add where user_id
 async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
   try {
@@ -30,10 +50,8 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
     if (transactionType) {
       if (transactionType === "expense") {
         filters.push(`t.amount < 0`);
-        // initialParams.push(`<`);
       } else if (transactionType === "income") {
         filters.push(`t.amount > 0`);
-        // initialParams.push(`>`);
       }
     }
     const filterQuery =
@@ -61,25 +79,25 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
       // TODO: !!!handle currency difference
       if (groupBy === "day") {
         groupByName = "t.created_at";
-        query = `SELECT DATE(${groupByName}) as ${groupBy}, sum(t.amount) as total_amount
+        query = `SELECT DATE(${groupByName}) as ${groupBy}, cur.currency_name as currency, sum(t.amount) as total_amount
           FROM transactions t
           JOIN users u ON t.user_id = u.user_id
           JOIN currencies cur ON t.currency_id = cur.currency_id
           JOIN ledgers l ON t.ledger_id = l.ledger_id
           ${filterQuery}
-          GROUP BY DATE(${groupByName})
+          GROUP BY DATE(${groupByName}), cur.currency_name
           ${sortQuery}
           ${limitQuery}`;
       } else if (groupBy === "category") {
         groupByName = "cat.category_name";
-        query = `SELECT ${groupByName} as ${groupBy}, sum(t.amount) as total_amount
+        query = `SELECT ${groupByName} as ${groupBy}, cur.currency_name as currency, sum(t.amount) as total_amount
           FROM transactions t
           JOIN users u ON t.user_id = u.user_id
           JOIN currencies cur ON t.currency_id = cur.currency_id
           JOIN categories cat ON cat.category_id = t.category_id
           JOIN ledgers l ON t.ledger_id = l.ledger_id
           ${filterQuery}
-          GROUP BY ${groupByName}
+          GROUP BY ${groupByName}, cur.currency_name
           ${sortQuery}
           ${limitQuery}`;
       }
@@ -106,4 +124,4 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
   }
 }
 
-export { fetchTransactions };
+export { fetchCurrencyRates, fetchTransactions };

@@ -1,6 +1,7 @@
 import { fetchTransactions } from "@/lib/data";
 import ClientLineChart from "@/components/client/line-chart";
 import {
+  convertCurrency,
   formatAmount,
   formatDate,
   generateFullDates,
@@ -10,9 +11,17 @@ import {
 import { Card } from "antd";
 import { Amount, TransactionQueryParams } from "@/lib/definitions";
 
-export default async function TransactionLineChart() {
-  const year = new Date().getFullYear();
-  const monthIndex = new Date().getMonth();
+export default async function TransactionLineChart({
+  today,
+  defaultCurrency,
+  rates,
+}: {
+  today: Date;
+  defaultCurrency: string;
+  rates: Record<string, number>;
+}) {
+  const year = today.getFullYear();
+  const monthIndex = today.getMonth();
   const startDate = getMonthFirstDate(year, monthIndex);
   const endDate = getMonthLastDate(year, monthIndex);
   const query: Partial<TransactionQueryParams> = {
@@ -22,33 +31,53 @@ export default async function TransactionLineChart() {
     groupBy: "day",
   };
   const amountsByDay: Partial<Amount>[] = await fetchTransactions(query);
+  const combinedAmountsByDay = amountsByDay.reduce<
+    Record<string, { day: string; total_amount: number }>
+  >((acc, item) => {
+    const day = formatDate(item.day as Date);
+    const amount =
+      item.currency === defaultCurrency
+        ? formatAmount(item.total_amount as string)
+        : convertCurrency(
+            formatAmount(item.total_amount as string),
+            rates[item.currency as string] as number
+          );
+    if (acc[day]) {
+      acc[day].total_amount += amount;
+    } else {
+      acc[day] = {
+        day: formatDate(item.day as Date),
+        total_amount: amount,
+      };
+    }
 
-  if (!Array.isArray(amountsByDay)) {
-    console.error("Error fetching transactions:", amountsByDay);
+    return acc;
+  }, {});
+  const resultArr = Object.values(combinedAmountsByDay);
+
+  if (!Array.isArray(resultArr)) {
+    console.error("Error fetching transactions:", resultArr);
     return;
   }
 
   const fullDates = generateFullDates(startDate, endDate);
   const completedData = fullDates.map((date) => {
-    const found = amountsByDay.find(
-      (item) => new Date((item as Amount).day).getTime() === date.getTime()
+    const found = resultArr.find(
+      (item) => new Date(item.day).getTime() === date.getTime()
     );
     return {
-      date: date.getDate(),
+      day: date.getDate(),
       total_amount: Math.abs(
-        formatAmount(found ? (found.total_amount as string) : "0")
+        formatAmount(found ? found.total_amount.toString() : "0")
       ),
     };
   });
-  const numberOfDays = amountsByDay.length;
+  const numberOfDays = resultArr.length;
   const averageDailyExpense =
-    amountsByDay.reduce(
-      (acc, item) => acc + parseFloat(item.total_amount as string),
-      0
-    ) / numberOfDays;
+    resultArr.reduce((acc, item) => acc + item.total_amount, 0) / numberOfDays;
 
   const config = {
-    xField: "date",
+    xField: "day",
     yField: "total_amount",
     point: {
       shapeField: "circle",

@@ -8,12 +8,13 @@ export default function ClientList({
 }: {
   datasource: Partial<Transaction>[];
 }) {
+  // TODO: fix bug - <li> cannot be a descendant of <li>
   return (
     <List
       itemLayout="horizontal"
       dataSource={datasource}
       renderItem={(item, index) => (
-        <List.Item key={index}>
+        <List.Item key={`avatar-wrap-${index}`}>
           <List.Item.Meta
             avatar={
               <Avatar
@@ -22,8 +23,11 @@ export default function ClientList({
             }
             title={item.category_name}
             description={item.description}
+            key={`avatar-${index}`}
           />
-          <List.Item>
+          <List.Item key={`details-${index}`}>
+            {item.currency_name}
+            &nbsp;&nbsp;
             {formatAmount(
               parseFloat((item as Partial<Transaction>).amount as string)
             )}

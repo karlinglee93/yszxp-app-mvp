@@ -9,13 +9,13 @@ export default function ClientPieChart({
   legend,
   height,
 }: {
-  datasource: Partial<Amount>[];
+  datasource: { category: string; total_amount: number }[];
   legend: boolean;
   height: number;
 }) {
   const formatedData = datasource.map((item) => ({
     category: item.category,
-    total_amount: Math.abs(formatAmount((item as Amount).total_amount)),
+    total_amount: Math.abs(formatAmount(item.total_amount)),
   }));
   const totalExpense = formatedData.reduce(
     (acc, item) => acc + formatAmount(item.total_amount),

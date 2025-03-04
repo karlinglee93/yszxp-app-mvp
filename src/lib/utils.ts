@@ -42,3 +42,7 @@ export const getMonthFirstDate = (year: number, monthIndex: number) => {
 export const getMonthLastDate = (year: number, monthIndex: number) => {
   return new Date(year, monthIndex + 1, 0);
 };
+
+export const convertCurrency = (value: number, rate: number) => {
+  return value / rate;
+};
