@@ -7,12 +7,12 @@ const items = [
   {
     key: "expense-pannel",
     label: "Expense",
-    children: <TransactionPanel type="expense-pannel" />,
+    children: <TransactionPanel type="expense" />,
   },
   {
     key: "income-pannel",
     label: "Income",
-    children: <TransactionPanel type="income-pannel" />,
+    children: <TransactionPanel type="income" />,
   },
 ];
 

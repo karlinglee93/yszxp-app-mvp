@@ -72,7 +72,7 @@ export default async function TransactionLineChart({
       ),
     };
   });
-  const numberOfDays = resultArr.length;
+  const numberOfDays = completedData.length;
   const averageDailyExpense =
     resultArr.reduce((acc, item) => acc + item.total_amount, 0) / numberOfDays;
 

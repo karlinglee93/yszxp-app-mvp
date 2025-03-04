@@ -43,7 +43,6 @@ export default async function CategoryPieChart({
             formatAmount(item.total_amount as string),
             rates[item.currency as string] as number
           );
-    console.log(amount);
     if (acc[category]) {
       acc[category].total_amount += amount;
     } else {

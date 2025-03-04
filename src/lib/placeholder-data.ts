@@ -2,333 +2,184 @@ import { v4 as uuidv4 } from "uuid";
 
 import { rawTransactions } from "./raw-transaction-data";
 
-const userId = uuidv4();
-const ledgerId = uuidv4();
-// Define currency IDs
-const currencyIdUsd = uuidv4();
-const currencyIdEur = uuidv4();
-const currencyIdCny = uuidv4();
-const currencyIdGbp = uuidv4();
-const currencyIdJpy = uuidv4();
-// Define category IDs
-const categoryIdGroceries = uuidv4();
-const categoryIdShopping = uuidv4();
-const categoryIdRestaurants = uuidv4();
-const categoryIdTransport = uuidv4();
-const categoryIdTravel = uuidv4();
-const categoryIdEntertainment = uuidv4();
-const categoryIdHealth = uuidv4();
-const categoryIdServices = uuidv4();
-const categoryIdGeneral = uuidv4();
-const categoryIdUtilities = uuidv4();
-const categoryIdInsurance = uuidv4();
-const categoryIdTransfers = uuidv4();
-const categoryIdGift = uuidv4();
-const categoryIdLoan = uuidv4();
-const categoryIdCredit = uuidv4();
-const categoryIdDonation = uuidv4();
-const categoryIdRefund = uuidv4();
-const categoryIdCashback = uuidv4();
-const categoryIdAllowance = uuidv4();
-const categoryIdSalary = uuidv4();
-const categoryIdNetSales = uuidv4();
-const categoryIdInterest = uuidv4();
-const categoryIdRemittances = uuidv4();
-const categoryIdInvestment = uuidv4();
-const categoryIdWealth = uuidv4();
-const categoryIdTopUps = uuidv4();
-const categoryIdCash = uuidv4();
-const categoryIdSavings = uuidv4();
-
 // TODO: secret user pwd
 const users = [
   {
-    user_id: userId,
+    user_id: uuidv4(),
     user_name: "admin",
     user_pwd: "admin",
   },
 ];
 
-const ledgers = [
+const currencies = [
   {
-    ledger_id: ledgerId,
-    ledger_name: "default",
-    currency_id: currencyIdEur,
-    is_shared: true,
+    currency_id: uuidv4(),
+    currency_name: "EUR",
+    currency_name_cn: "欧元",
+  },
+  {
+    currency_id: uuidv4(),
+    currency_name: "USD",
+    currency_name_cn: "美元",
+  },
+  {
+    currency_id: uuidv4(),
+    currency_name: "CNY",
+    currency_name_cn: "人民币",
+  },
+  {
+    currency_id: uuidv4(),
+    currency_name: "GBP",
+    currency_name_cn: "英镑",
+  },
+  {
+    currency_id: uuidv4(),
+    currency_name: "JPY",
+    currency_name_cn: "日元",
   },
 ];
 
-const currencies = [
+const ledgers = [
   {
-    currency_id: currencyIdUsd,
-    currency_name: "USD",
-  },
-  {
-    currency_id: currencyIdEur,
-    currency_name: "EUR",
-  },
-  {
-    currency_id: currencyIdCny,
-    currency_name: "CNY",
-  },
-  {
-    currency_id: currencyIdGbp,
-    currency_name: "GBP",
-  },
-  {
-    currency_id: currencyIdJpy,
-    currency_name: "JPY",
+    ledger_id: uuidv4(),
+    ledger_name: "default",
+    currency_id: currencies.find((currency) => currency.currency_name === "EUR")
+      ?.currency_id,
+    is_shared: true,
   },
 ];
 
 const categories = [
+  { category_name: "vegetables", category_name_cn: "蔬菜", type: "expense" },
+  { category_name: "fruits", category_name_cn: "水果", type: "expense" },
+  { category_name: "fandom", category_name_cn: "追星", type: "expense" },
+  { category_name: "others", category_name_cn: "其它", type: "expense" },
+  { category_name: "lottery", category_name_cn: "彩票", type: "expense" },
+  { category_name: "pets", category_name_cn: "宠物", type: "expense" },
+  { category_name: "games", category_name_cn: "游戏", type: "expense" },
+  { category_name: "donations", category_name_cn: "捐赠", type: "expense" },
+  { category_name: "repairs", category_name_cn: "维修", type: "expense" },
+  { category_name: "car", category_name_cn: "汽车", type: "expense" },
   {
-    category_id: categoryIdGroceries,
-    category_name: "groceries",
+    category_name: "tobacco_alcohol",
+    category_name_cn: "烟酒",
     type: "expense",
-    is_shared: true,
+  },
+  { category_name: "education", category_name_cn: "学习", type: "expense" },
+  { category_name: "courier", category_name_cn: "快递", type: "expense" },
+  { category_name: "red_envelope", category_name_cn: "红包", type: "expense" },
+  { category_name: "repayment", category_name_cn: "还款", type: "expense" },
+  { category_name: "lending", category_name_cn: "借出", type: "expense" },
+  { category_name: "travel", category_name_cn: "旅行", type: "expense" },
+  { category_name: "career", category_name_cn: "事业", type: "expense" },
+  { category_name: "subscription", category_name_cn: "订阅", type: "expense" },
+  { category_name: "beverages", category_name_cn: "饮品", type: "expense" },
+  { category_name: "takeout", category_name_cn: "外卖", type: "expense" },
+  { category_name: "finance", category_name_cn: "理财", type: "expense" },
+  { category_name: "communication", category_name_cn: "通讯", type: "expense" },
+  { category_name: "entertainment", category_name_cn: "娱乐", type: "expense" },
+  { category_name: "social", category_name_cn: "社交", type: "expense" },
+  {
+    category_name: "digital_products",
+    category_name_cn: "数码",
+    type: "expense",
+  },
+  { category_name: "clothing", category_name_cn: "服饰", type: "expense" },
+  { category_name: "beauty", category_name_cn: "美容", type: "expense" },
+  { category_name: "gifts", category_name_cn: "礼品", type: "expense" },
+  { category_name: "gift_money", category_name_cn: "礼金", type: "expense" },
+  { category_name: "sports", category_name_cn: "运动", type: "expense" },
+  { category_name: "medical", category_name_cn: "医疗", type: "expense" },
+  { category_name: "books", category_name_cn: "书籍", type: "expense" },
+  { category_name: "dining", category_name_cn: "餐饮", type: "expense" },
+  { category_name: "restaurant", category_name_cn: "下馆子", type: "expense" },
+  { category_name: "supermarket", category_name_cn: "超市", type: "expense" },
+  { category_name: "snacks", category_name_cn: "零食", type: "expense" },
+  {
+    category_name: "transportation",
+    category_name_cn: "交通",
+    type: "expense",
+  },
+  { category_name: "housing", category_name_cn: "住房", type: "expense" },
+  { category_name: "household", category_name_cn: "家庭", type: "expense" },
+  {
+    category_name: "daily_necessities",
+    category_name_cn: "日用",
+    type: "expense",
   },
   {
-    category_id: categoryIdShopping,
-    category_name: "shopping",
+    category_name: "home_furnishing",
+    category_name_cn: "家居",
     type: "expense",
-    is_shared: true,
   },
+  { category_name: "office", category_name_cn: "办公", type: "expense" },
+  { category_name: "shopping", category_name_cn: "购物", type: "expense" },
+  { category_name: "salary", category_name_cn: "工资", type: "income" },
   {
-    category_id: categoryIdRestaurants,
-    category_name: "restaurants",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdTransport,
-    category_name: "transport",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdTravel,
-    category_name: "travel",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdEntertainment,
-    category_name: "entertainment",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdHealth,
-    category_name: "health",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdServices,
-    category_name: "services",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdGeneral,
-    category_name: "general",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdUtilities,
-    category_name: "utilities",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdInsurance,
-    category_name: "insurance",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdGift,
-    category_name: "gift",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdLoan,
-    category_name: "loan",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdCredit,
-    category_name: "credit",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdDonation,
-    category_name: "donation",
-    type: "expense",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdRefund,
-    category_name: "refund",
+    category_name: "red_envelope_income",
+    category_name_cn: "红包",
     type: "income",
-    is_shared: true,
   },
+  { category_name: "rent", category_name_cn: "租金", type: "income" },
   {
-    category_id: categoryIdCashback,
-    category_name: "cashback",
+    category_name: "gift_money_income",
+    category_name_cn: "礼金",
     type: "income",
-    is_shared: true,
   },
+  { category_name: "dividends", category_name_cn: "分红", type: "income" },
+  { category_name: "investment", category_name_cn: "理财", type: "income" },
   {
-    category_id: categoryIdAllowance,
-    category_name: "allowance",
+    category_name: "year_end_bonus",
+    category_name_cn: "年终奖",
     type: "income",
-    is_shared: true,
   },
-  {
-    category_id: categoryIdSalary,
-    category_name: "salary",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdNetSales,
-    category_name: "net_sales",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdInterest,
-    category_name: "interest",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdRemittances,
-    category_name: "remittances",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdInvestment,
-    category_name: "investment",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdWealth,
-    category_name: "wealth",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdTopUps,
-    category_name: "top_ups",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdCash,
-    category_name: "cash",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdSavings,
-    category_name: "savings",
-    type: "income",
-    is_shared: true,
-  },
-  {
-    category_id: categoryIdTransfers,
-    category_name: "transfers",
-    type: "income",
-    is_shared: true,
-  },
-];
+  { category_name: "borrowing", category_name_cn: "借入", type: "income" },
+  { category_name: "receivables", category_name_cn: "收款", type: "income" },
+  { category_name: "idle_goods", category_name_cn: "闲置", type: "income" },
+  { category_name: "coffee", category_name_cn: "咖啡", type: "income" },
+].map((category) => ({
+  category_id: uuidv4(),
+  category_name: category.category_name,
+  category_name_cn: category.category_name_cn,
+  type: category.type,
+  is_shared: true,
+}));
 
 // Steps to convert raw data of transactions to standarded data:
 // 1. export transaction data from App
 // 2. import csv on https://jsoneditoronline.org
-const convertCurrencyToId = (currency: string) => {
-  switch (currency) {
-    case "欧元":
-      return currencyIdEur;
-    case "人民币":
-      return currencyIdCny;
-    case "美元":
-      return currencyIdUsd;
-    case "英镑":
-      return currencyIdGbp;
-    case "日元":
-      return currencyIdJpy;
-    default:
-      return currencyIdEur;
+const convertCurrencyToId = (currency_cn: string) => {
+  const currency = currencies.find(
+    (currency) => currency.currency_name_cn === currency_cn
+  );
+
+  if (!currency) {
+    throw new Error(`Currency not found: ${currency_cn}`);
   }
+
+  return currency.currency_id;
 };
 
-const convertCategoryToId = (category: string) => {
-  switch (category) {
-    case "社交":
-    case "娱乐":
-      return categoryIdEntertainment;
-    case "借出":
-      return categoryIdLoan;
-    case "通讯":
-      return categoryIdUtilities;
-    case "住房":
-    case "办公":
-    case "学习":
-      return categoryIdGeneral;
-    case "零食":
-    case "超市":
-      return categoryIdGroceries;
-    case "餐饮":
-    case "下馆子":
-      return categoryIdRestaurants;
-    case "数码":
-    case "日用":
-    case "服饰":
-    case "家居":
-      return categoryIdShopping;
-    case "旅行":
-      return categoryIdTravel;
-    case "礼品":
-      return categoryIdGift;
-    case "美容":
-    case "运动":
-      return categoryIdHealth;
-    case "订阅":
-    case "快递":
-    case "还款":
-      return categoryIdServices;
-    case "交通":
-      return categoryIdTransport;
-    case "分红":
-      return categoryIdInvestment;
-    case "闲置":
-    case "咖啡":
-      return categoryIdNetSales;
-    case "收款":
-    case "红包":
-      return categoryIdTransfers;
-    default:
-      return categoryIdGeneral;
+const convertCategoryToId = (category_cn: string) => {
+  const category = categories.find(
+    (category) => category.category_name_cn === category_cn
+  );
+
+  if (!category) {
+    throw new Error(`Category not found: ${category_cn}`);
   }
+
+  return category.category_id;
 };
 
 const transactions = rawTransactions.map((transaction) => ({
   id: uuidv4(),
-  user_id: userId,
+  user_id: users.find((user) => user.user_name === "admin")?.user_id,
   category_id: convertCategoryToId(transaction["分类"]),
   created_at: transaction["时间"],
   amount: transaction["金额"],
-  ledger_id: ledgerId,
+  ledger_id: ledgers.find((ledger) => ledger.ledger_name === "default")
+    ?.ledger_id,
   currency_id: convertCurrencyToId(transaction["货币"]),
   description: transaction["备注"],
 }));

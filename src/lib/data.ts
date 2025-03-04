@@ -75,8 +75,7 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
 
     if (useGroupBy) {
       let groupByName = "";
-      // TODO: add LIMIT and OFFSET
-      // TODO: !!!handle currency difference
+      // TODO: add OFFSET
       if (groupBy === "day") {
         groupByName = "t.created_at";
         query = `SELECT DATE(${groupByName}) as ${groupBy}, cur.currency_name as currency, sum(t.amount) as total_amount

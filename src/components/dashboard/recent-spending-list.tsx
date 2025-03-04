@@ -7,8 +7,6 @@ import ClientList from "@/components/client/list";
 
 export default async function RecentSpendingList({
   today,
-  defaultCurrency,
-  rates,
 }: {
   today: Date;
   defaultCurrency: string;

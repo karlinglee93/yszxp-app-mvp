@@ -10,6 +10,7 @@ import {
 
 const client = await db.connect();
 
+// TODO: auto seed per day for demo purpose
 async function seedUsers() {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await client.sql`CREATE TABLE IF NOT EXISTS users (
