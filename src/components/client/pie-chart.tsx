@@ -25,6 +25,7 @@ export default function ClientPieChart({
     angleField: "total_amount",
     colorField: "category",
     radius: 0.8,
+    innerRadius: 0.45,
     label: {
       text: (amount: Amount) =>
         `${amount.category}  ${formatPercentage(

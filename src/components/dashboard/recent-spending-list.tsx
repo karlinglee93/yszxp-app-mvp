@@ -9,8 +9,6 @@ export default async function RecentSpendingList({
   today,
 }: {
   today: Date;
-  defaultCurrency: string;
-  rates: object;
 }) {
   const year = today.getFullYear();
   const monthIndex = today.getMonth();

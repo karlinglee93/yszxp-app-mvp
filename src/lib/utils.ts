@@ -44,5 +44,5 @@ export const getMonthLastDate = (year: number, monthIndex: number) => {
 };
 
 export const convertCurrency = (value: number, rate: number) => {
-  return value / rate;
+  return formatAmount(value / rate);
 };

@@ -8,10 +8,7 @@ async function fetchCurrencyRates(
   console.info("Fetching currency rates from API");
   try {
     const response = await fetch(
-      `https://api.exchangerate-api.com/v4/latest/${currencyName}`,
-      {
-        next: { revalidate: 3600 * 24 },
-      }
+      `https://api.exchangerate-api.com/v4/latest/${currencyName}`
     );
 
     if (!response.ok) throw new Error("Failed to fetch currency rates");

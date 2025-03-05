@@ -11,7 +11,6 @@ export default function ClientCard({
   expense: number;
   currency: string;
 }) {
-  console.log(income, expense);
   const balance = income + expense;
   const total = income - expense;
   const expensePercent = formatPercentage(expense / total);

@@ -1,12 +1,13 @@
 import BalanceCard from "@/components/dashboard/balance-card";
 import TransactionLineChart from "@/components/dashboard/transaction-line-chart";
-import CategoryPieChart from "@/components/dashboard/category-pie-chart";
 import { CardSkeleton, LineChartSkeleton } from "@/components/skeletons";
 import { Col, Row } from "antd";
 import { Suspense } from "react";
-import RecentSpendingList from "@/components/dashboard/recent-spending-list";
-import TopSpendingList from "@/components/dashboard/top-spending-list";
 import { fetchCurrencyRates } from "@/lib/data";
+import { TransactionQueryParams } from "@/lib/definitions";
+import { formatDate, getMonthFirstDate, getMonthLastDate } from "@/lib/utils";
+import TransactionList from "@/components/dashboard/transaction-list";
+import CategoryChart from "@/components/dashboard/category-chart";
 
 // TODO: !!! add calender filter to show different data: this month, this year, latest year, util now
 // TODO: add category expense list
@@ -15,10 +16,39 @@ import { fetchCurrencyRates } from "@/lib/data";
 // TODO: add logs for each function
 // TODO: add error status/page for each component
 // TODO: set defauly currency for the ledger
+// TODO: replace today
+const today = new Date("2025-02-20");
+const year = today.getFullYear();
+const monthIndex = today.getMonth();
+const startDate = getMonthFirstDate(year, monthIndex);
+const endDate = getMonthLastDate(year, monthIndex);
+const ledgerCurrency = "EUR";
+
+const categorySpendingQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "expense",
+  groupBy: "category",
+  sortBy: "amount",
+};
+const recentSpendingQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "expense",
+  sortBy: "date",
+  orderBy: "DESC",
+  limit: 5,
+};
+const topSpendingQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "expense",
+  sortBy: "amount",
+  orderBy: "ASC",
+  limit: 5,
+};
+
 export default async function Page() {
-  // TODO: replace today
-  const today = new Date("2025-02-20");
-  const ledgerCurrency = "EUR";
   const currencyRates = await fetchCurrencyRates(ledgerCurrency);
   console.info(
     `Succeed to fetch currency rate on ${currencyRates.date}: ${JSON.stringify(
@@ -51,37 +81,34 @@ export default async function Page() {
           </Suspense>
         </Col>
         <Col span={12}>
-          <TransactionLineChart
-            today={today}
-            defaultCurrency={ledgerCurrency}
-            rates={currencyRates.rates as Record<string, number>}
-            type="income"
-          />
+          <Suspense fallback={<LineChartSkeleton />}>
+            <TransactionLineChart
+              today={today}
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates as Record<string, number>}
+              type="income"
+            />
+          </Suspense>
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-          <CategoryPieChart
-            today={today}
+          <CategoryChart
             defaultCurrency={ledgerCurrency}
             rates={currencyRates.rates as Record<string, number>}
+            query={categorySpendingQuery}
           />
         </Col>
       </Row>
       <Row>
         <Col span={12}>
-          <RecentSpendingList
-            today={today}
-            defaultCurrency={ledgerCurrency}
-            rates={currencyRates.rates as Record<string, number>}
+          <TransactionList
+            title="Recent Spendings"
+            query={recentSpendingQuery}
           />
         </Col>
         <Col span={12}>
-          <TopSpendingList
-            today={today}
-            defaultCurrency={ledgerCurrency}
-            rates={currencyRates.rates as Record<string, number>}
-          />
+          <TransactionList title="Top Spendings" query={topSpendingQuery} />
         </Col>
       </Row>
     </main>
