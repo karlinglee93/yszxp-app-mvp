@@ -5,34 +5,21 @@ import {
   formatAmount,
   formatDate,
   generateFullDates,
-  getMonthFirstDate,
-  getMonthLastDate,
 } from "@/lib/utils";
 import { Card } from "antd";
 import { Amount, TransactionQueryParams } from "@/lib/definitions";
 
 export default async function TransactionLineChart({
-  today,
+  title,
   defaultCurrency,
   rates,
-  type,
+  query,
 }: {
-  today: Date;
+  title: string;
   defaultCurrency: string;
   rates: Record<string, number>;
-  type: "income" | "expense";
+  query: Partial<TransactionQueryParams>;
 }) {
-  const subTitle = type === "expense" ? "Spending" : "Earning";
-  const year = today.getFullYear();
-  const monthIndex = today.getMonth();
-  const startDate = getMonthFirstDate(year, monthIndex);
-  const endDate = getMonthLastDate(year, monthIndex);
-  const query: Partial<TransactionQueryParams> = {
-    startDate: formatDate(startDate),
-    endDate: formatDate(endDate),
-    transactionType: type,
-    groupBy: "day",
-  };
   const amountsByDay: Partial<Amount>[] = await fetchTransactions(query);
   const combinedAmountsByDay = amountsByDay.reduce<
     Record<string, { day: string; total_amount: number }>
@@ -63,7 +50,10 @@ export default async function TransactionLineChart({
     return;
   }
 
-  const fullDates = generateFullDates(startDate, endDate);
+  const fullDates = generateFullDates(
+    new Date(query.startDate as string),
+    new Date(query.endDate as string)
+  );
   const completedData = fullDates.map((date) => {
     const found = resultArr.find(
       (item) => new Date(item.day).getTime() === date.getTime()
@@ -97,9 +87,9 @@ export default async function TransactionLineChart({
   };
 
   return (
-    <Card title={`${subTitle} Trend Overview`}>
+    <Card title={`${title} Trend Overview`}>
       <label>
-        Average Daily {subTitle} This Month:{" "}
+        Average Daily {title} This Month:{" "}
         {Math.abs(formatAmount(averageDailyAmount))}
       </label>
       <ClientLineChart

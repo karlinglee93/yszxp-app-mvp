@@ -1,6 +1,11 @@
 import BalanceCard from "@/components/dashboard/balance-card";
 import TransactionLineChart from "@/components/dashboard/transaction-line-chart";
-import { CardSkeleton, LineChartSkeleton } from "@/components/skeletons";
+import {
+  CardSkeleton,
+  LineChartSkeleton,
+  ListSkeleton,
+  PieChartSkeleton,
+} from "@/components/skeletons";
 import { Col, Row } from "antd";
 import { Suspense } from "react";
 import { fetchCurrencyRates } from "@/lib/data";
@@ -23,6 +28,26 @@ const monthIndex = today.getMonth();
 const startDate = getMonthFirstDate(year, monthIndex);
 const endDate = getMonthLastDate(year, monthIndex);
 const ledgerCurrency = "EUR";
+
+const balanceCardQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "all",
+};
+
+const spendingTrendQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "expense",
+  groupBy: "day",
+};
+
+const earningTrendQuery: Partial<TransactionQueryParams> = {
+  startDate: formatDate(startDate),
+  endDate: formatDate(endDate),
+  transactionType: "income",
+  groupBy: "day",
+};
 
 const categorySpendingQuery: Partial<TransactionQueryParams> = {
   startDate: formatDate(startDate),
@@ -62,9 +87,9 @@ export default async function Page() {
         <Col span={12}>
           <Suspense fallback={<CardSkeleton />}>
             <BalanceCard
-              today={today}
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates as Record<string, number>}
+              query={balanceCardQuery}
             />
           </Suspense>
         </Col>
@@ -73,42 +98,48 @@ export default async function Page() {
         <Col span={12}>
           <Suspense fallback={<LineChartSkeleton />}>
             <TransactionLineChart
-              today={today}
+              title="Spending"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates as Record<string, number>}
-              type="expense"
+              query={spendingTrendQuery}
             />
           </Suspense>
         </Col>
         <Col span={12}>
           <Suspense fallback={<LineChartSkeleton />}>
             <TransactionLineChart
-              today={today}
+              title="Earning"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates as Record<string, number>}
-              type="income"
+              query={earningTrendQuery}
             />
           </Suspense>
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-          <CategoryChart
-            defaultCurrency={ledgerCurrency}
-            rates={currencyRates.rates as Record<string, number>}
-            query={categorySpendingQuery}
-          />
+          <Suspense fallback={<PieChartSkeleton />}>
+            <CategoryChart
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates as Record<string, number>}
+              query={categorySpendingQuery}
+            />
+          </Suspense>
         </Col>
       </Row>
       <Row>
         <Col span={12}>
-          <TransactionList
-            title="Recent Spendings"
-            query={recentSpendingQuery}
-          />
+          <Suspense fallback={<ListSkeleton />}>
+            <TransactionList
+              title="Recent Spendings"
+              query={recentSpendingQuery}
+            />
+          </Suspense>
         </Col>
         <Col span={12}>
-          <TransactionList title="Top Spendings" query={topSpendingQuery} />
+          <Suspense fallback={<ListSkeleton />}>
+            <TransactionList title="Top Spendings" query={topSpendingQuery} />
+          </Suspense>
         </Col>
       </Row>
     </main>
