@@ -46,10 +46,21 @@ export default async function Page() {
               today={today}
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates as Record<string, number>}
+              type="expense"
             />
           </Suspense>
         </Col>
         <Col span={12}>
+          <TransactionLineChart
+            today={today}
+            defaultCurrency={ledgerCurrency}
+            rates={currencyRates.rates as Record<string, number>}
+            type="income"
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}>
           <CategoryPieChart
             today={today}
             defaultCurrency={ledgerCurrency}

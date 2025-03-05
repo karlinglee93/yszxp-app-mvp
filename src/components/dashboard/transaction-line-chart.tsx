@@ -15,11 +15,14 @@ export default async function TransactionLineChart({
   today,
   defaultCurrency,
   rates,
+  type,
 }: {
   today: Date;
   defaultCurrency: string;
   rates: Record<string, number>;
+  type: "income" | "expense";
 }) {
+  const subTitle = type === "expense" ? "Spending" : "Earning";
   const year = today.getFullYear();
   const monthIndex = today.getMonth();
   const startDate = getMonthFirstDate(year, monthIndex);
@@ -27,7 +30,7 @@ export default async function TransactionLineChart({
   const query: Partial<TransactionQueryParams> = {
     startDate: formatDate(startDate),
     endDate: formatDate(endDate),
-    transactionType: "expense",
+    transactionType: type,
     groupBy: "day",
   };
   const amountsByDay: Partial<Amount>[] = await fetchTransactions(query);
@@ -73,7 +76,7 @@ export default async function TransactionLineChart({
     };
   });
   const numberOfDays = completedData.length;
-  const averageDailyExpense =
+  const averageDailyAmount =
     resultArr.reduce((acc, item) => acc + item.total_amount, 0) / numberOfDays;
 
   const config = {
@@ -94,10 +97,10 @@ export default async function TransactionLineChart({
   };
 
   return (
-    <Card title="Spending Trend Overview">
+    <Card title={`${subTitle} Trend Overview`}>
       <label>
-        Average Daily Spending This Month:{" "}
-        {Math.abs(formatAmount(averageDailyExpense))}
+        Average Daily {subTitle} This Month:{" "}
+        {Math.abs(formatAmount(averageDailyAmount))}
       </label>
       <ClientLineChart
         datasource={completedData}
