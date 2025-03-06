@@ -15,7 +15,7 @@ import TransactionList from "@/components/dashboard/transaction-list";
 import CategoryChart from "@/components/dashboard/category-chart";
 
 // TODO: !!! add calender filter to show different data: this month, this year, latest year, util now, custom
-// TODO: add category expense list
+// TODO: !!! enhance fetch API
 // TODO: add category color and avatar configs
 // TODO: handle 0 values, unit test
 // TODO: add logs for each function

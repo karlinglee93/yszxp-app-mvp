@@ -14,6 +14,14 @@ export type Transaction = {
   description: string;
 };
 
+export type TransactionType = {
+  created_at: object;
+  amount: string;
+  category_name: string;
+  currency_name: string;
+  description: string;
+};
+
 export interface Amount {
   total_amount: string;
   day: Date;

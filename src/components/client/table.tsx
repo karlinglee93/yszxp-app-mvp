@@ -1,7 +1,8 @@
 "use client";
 import { Transaction } from "@/lib/definitions";
 import { DollarTwoTone } from "@ant-design/icons";
-import { Table, TableProps, Tag } from "antd";
+import { Pagination, Table, TableProps, Tag } from "antd";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const columns: TableProps["columns"] = [
   {
@@ -46,9 +47,34 @@ const columns: TableProps["columns"] = [
 
 export default function ClientTable({
   datasource,
+  totalCount,
 }: {
   datasource: Partial<Transaction>[];
+  totalCount: number;
 }) {
-  console.log(datasource);
-  return <Table columns={columns} dataSource={datasource} />;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const handlePaginationChange = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  return (
+    <div>
+      <Table columns={columns} dataSource={datasource} pagination={false} />
+      <Pagination
+        align="center"
+        current={currentPage}
+        showTotal={(total, range) =>
+          `${range[0]}-${range[1]} of ${total} items`
+        }
+        showSizeChanger={false}
+        total={totalCount}
+        onChange={handlePaginationChange}
+      />
+    </div>
+  );
 }

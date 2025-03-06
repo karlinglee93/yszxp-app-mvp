@@ -1,6 +1,10 @@
-import { db } from "@vercel/postgres";
+import { db, sql } from "@vercel/postgres";
 
-import { CurrencyRates, TransactionQueryParams } from "@/lib/definitions";
+import {
+  CurrencyRates,
+  TransactionQueryParams,
+  TransactionType,
+} from "@/lib/definitions";
 
 async function fetchCurrencyRates(
   currencyName: string
@@ -112,7 +116,6 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
     console.debug(`Query params: ${initialParams.join(", ")}`);
     console.debug(`SQL: ${query}`);
     const result = await db.query(query, initialParams);
-    // console.debug(`Results: ${result.rows}`)
     return result.rows;
   } catch (error) {
     console.error("Database Error:", error);
@@ -120,4 +123,60 @@ async function fetchTransactions(queryParams: Partial<TransactionQueryParams>) {
   }
 }
 
-export { fetchCurrencyRates, fetchTransactions };
+const ITEMS_PER_PAGE = 10;
+async function fetchFilteredTransactions(query: string, currentPage: number) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const filteredTransactions = await sql<TransactionType>`
+    SELECT 
+      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+    FROM transactions t
+    JOIN users u ON t.user_id = u.user_id
+    JOIN currencies cur ON t.currency_id = cur.currency_id
+    JOIN categories cat ON t.category_id = cat.category_id
+    JOIN ledgers l ON t.ledger_id = l.ledger_id
+    WHERE 
+      t.created_at::TEXT ILIKE ${`%${query}%`} OR
+      cat.category_name ILIKE ${`%${query}%`} OR
+      t.amount::TEXT ILIKE ${`%${query}%`} OR
+      cur.currency_name ILIKE ${`%${query}%`} OR
+      t.description ILIKE ${`%${query}%`}
+    ORDER BY t.created_at DESC
+    LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
+
+    return filteredTransactions.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered transaction data.");
+  }
+}
+
+async function fetchTransactionsCount(query: string) {
+  try {
+    const count = await sql`SELECT COUNT(*)
+    FROM transactions t
+    JOIN users u ON t.user_id = u.user_id
+    JOIN currencies cur ON t.currency_id = cur.currency_id
+    JOIN categories cat ON t.category_id = cat.category_id
+    JOIN ledgers l ON t.ledger_id = l.ledger_id
+    WHERE 
+      t.created_at::TEXT ILIKE ${`%${query}%`} OR
+      cat.category_name ILIKE ${`%${query}%`} OR
+      t.amount::TEXT ILIKE ${`%${query}%`} OR
+      cur.currency_name ILIKE ${`%${query}%`} OR
+      t.description ILIKE ${`%${query}%`}`;
+
+    return count.rows[0].count;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of transactions.");
+  }
+}
+
+export {
+  fetchCurrencyRates,
+  fetchTransactions,
+  fetchFilteredTransactions,
+  fetchTransactionsCount,
+};

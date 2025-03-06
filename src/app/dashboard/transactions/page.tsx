@@ -9,7 +9,16 @@ import { Col, Row } from "antd";
 // const endDate = getMonthLastDate(year, monthIndex);
 // const ledgerCurrency = "EUR";
 
-export default function Page() {
+export default async function Page(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+
   return (
     <div>
       <Row>
@@ -19,7 +28,7 @@ export default function Page() {
       </Row>
       <Row>
         <Col span={24}>
-          <TransactionTable />
+          <TransactionTable query={query} page={currentPage} />
         </Col>
       </Row>
     </div>

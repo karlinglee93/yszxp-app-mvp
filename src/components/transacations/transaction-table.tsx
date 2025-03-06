@@ -1,24 +1,27 @@
 import ClientTable from "@/components/client/table";
-import { fetchTransactions } from "@/lib/data";
-import { Transaction, TransactionQueryParams } from "@/lib/definitions";
+import { fetchFilteredTransactions, fetchTransactionsCount } from "@/lib/data";
 
-export default async function TransactionTable() {
-  const transactionQuery: Partial<TransactionQueryParams> = {
-    transactionType: "all",
-    sortBy: "date",
-    orderBy: "DESC",
-  };
-  const transactions: Partial<Transaction>[] = await fetchTransactions(
-    transactionQuery
-  );
-  if (!Array.isArray(transactions)) {
-    console.error("Error fetching transactions:", transactions);
+export default async function TransactionTable({
+  query,
+  page,
+}: {
+  query: string;
+  page: number;
+}) {
+  const filteredTransactions = await fetchFilteredTransactions(query, page);
+  const totalCount = await fetchTransactionsCount(query);
+
+  if (!Array.isArray(filteredTransactions)) {
+    console.error(
+      "Error fetching filtered transactions:",
+      filteredTransactions
+    );
     return;
   }
 
   return (
     <div>
-      <ClientTable datasource={transactions} />
+      <ClientTable datasource={filteredTransactions} totalCount={totalCount} />
     </div>
   );
 }
