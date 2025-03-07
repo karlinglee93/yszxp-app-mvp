@@ -1,4 +1,15 @@
 // Manually define the types that will be returned from the database
+export enum TransactionTypeType {
+  EXPENSE = "expense",
+  INCOME = "income",
+  ALL = "all",
+}
+
+export enum TransactionSortType {
+  DATE = "date",
+  AMOUNT = "amount",
+}
+
 export type Transaction = {
   id: string;
   created_at: object;
@@ -15,11 +26,23 @@ export type Transaction = {
 };
 
 export type TransactionType = {
-  created_at: object;
+  created_at: Date;
   amount: string;
   category_name: string;
   currency_name: string;
   description: string;
+};
+
+export type TotalAmountByDateType = {
+  date: Date;
+  total_amount: string;
+  currency: string;
+};
+
+export type TotalAmountByCategoryType = {
+  category: string;
+  total_amount: string;
+  currency: string;
 };
 
 export interface Amount {
@@ -33,7 +56,7 @@ export interface Amount {
 export interface TransactionQueryParams {
   startDate?: string;
   endDate?: string;
-  transactionType: "expense" | "income" | "all";
+  transactionType: TransactionTypeType;
   sortBy: "date" | "amount";
   orderBy: "ASC" | "DESC";
   groupBy?: "day" | "category" | "currency";
@@ -44,5 +67,5 @@ export interface CurrencyRates {
   provider: string;
   base: string;
   date: Date;
-  rates: object;
+  rates: Record<string, number>;
 }

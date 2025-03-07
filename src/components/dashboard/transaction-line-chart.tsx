@@ -1,4 +1,8 @@
-import { fetchTransactions } from "@/lib/data";
+import {
+  fetchExpenseTotalAmountByDate,
+  fetchIncomeTotalAmountByDate,
+  fetchTotalAmountByDate,
+} from "@/lib/data";
 import ClientLineChart from "@/components/client/line-chart";
 import {
   convertCurrency,
@@ -7,70 +11,83 @@ import {
   generateFullDates,
 } from "@/lib/utils";
 import { Card } from "antd";
-import { Amount, TransactionQueryParams } from "@/lib/definitions";
+import { TotalAmountByDateType, TransactionTypeType } from "@/lib/definitions";
 
 export default async function TransactionLineChart({
   title,
   defaultCurrency,
   rates,
-  query,
+  timeRange,
+  type,
 }: {
   title: string;
   defaultCurrency: string;
   rates: Record<string, number>;
-  query: Partial<TransactionQueryParams>;
+  timeRange: { start: string; end: string };
+  type: TransactionTypeType;
 }) {
-  const amountsByDay: Partial<Amount>[] = await fetchTransactions(query);
-  const combinedAmountsByDay = amountsByDay.reduce<
-    Record<string, { day: string; total_amount: number }>
+  const start = formatDate(timeRange.start);
+  const end = formatDate(timeRange.end);
+
+  let totalAmountsByDate: TotalAmountByDateType[] = [];
+  if (type === TransactionTypeType.EXPENSE) {
+    totalAmountsByDate = await fetchExpenseTotalAmountByDate(start, end);
+  } else if (type === TransactionTypeType.INCOME) {
+    totalAmountsByDate = await fetchIncomeTotalAmountByDate(start, end);
+  } else if (type === TransactionTypeType.ALL) {
+    totalAmountsByDate = await fetchTotalAmountByDate(start, end);
+  } else {
+    throw Error(`No such transaction type: ${type}`);
+  }
+
+  const tempTotalAmountsByDate = totalAmountsByDate.reduce<
+    Record<string, { date: string; total_amount: number }>
   >((acc, item) => {
-    const day = formatDate(item.day as Date);
+    const date = formatDate(item.date);
     const amount =
       item.currency === defaultCurrency
-        ? formatAmount(item.total_amount as string)
+        ? formatAmount(item.total_amount)
         : convertCurrency(
-            formatAmount(item.total_amount as string),
-            rates[item.currency as string] as number
+            formatAmount(item.total_amount),
+            rates[item.currency]
           );
-    if (acc[day]) {
-      acc[day].total_amount += amount;
+    if (acc[date]) {
+      acc[date].total_amount += amount;
     } else {
-      acc[day] = {
-        day: formatDate(item.day as Date),
+      acc[date] = {
+        date: formatDate(item.date),
         total_amount: amount,
       };
     }
 
     return acc;
   }, {});
-  const resultArr = Object.values(combinedAmountsByDay);
+  const results = Object.values(tempTotalAmountsByDate);
 
-  if (!Array.isArray(resultArr)) {
-    console.error("Error fetching transactions:", resultArr);
+  if (!Array.isArray(results)) {
+    console.error("Error fetching transactions:", results);
     return;
   }
 
-  const fullDates = generateFullDates(
-    new Date(query.startDate as string),
-    new Date(query.endDate as string)
-  );
+  const fullDates = generateFullDates(start, end);
   const completedData = fullDates.map((date) => {
-    const found = resultArr.find(
-      (item) => new Date(item.day).getTime() === date.getTime()
+    const found = results.find(
+      (item) => new Date(item.date).getTime() === date.getTime()
     );
     return {
-      day: date.getDate(),
-      total_amount: Math.abs(
-        formatAmount(found ? found.total_amount.toString() : "0")
-      ),
+      date: date,
+      total_amount: Math.abs(formatAmount(found ? found.total_amount : 0)),
     };
   });
-  const numberOfDays = completedData.length;
-  const averageDailyAmount =
-    resultArr.reduce((acc, item) => acc + item.total_amount, 0) / numberOfDays;
+  const numberOfPastDays = Math.ceil(
+    (new Date().getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const averageAmount =
+    results.reduce((acc, item) => acc + item.total_amount, 0) /
+    numberOfPastDays;
 
   const config = {
-    xField: "day",
+    xField: "date",
     yField: "total_amount",
     point: {
       shapeField: "circle",
@@ -90,7 +107,7 @@ export default async function TransactionLineChart({
     <Card title={`${title} Trend Overview`}>
       <label>
         Average Daily {title} This Month:{" "}
-        {Math.abs(formatAmount(averageDailyAmount))}
+        {Math.abs(formatAmount(averageAmount))}
       </label>
       <ClientLineChart
         datasource={completedData}

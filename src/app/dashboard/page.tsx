@@ -9,10 +9,10 @@ import {
 import { Col, Row } from "antd";
 import { Suspense } from "react";
 import { fetchCurrencyRates } from "@/lib/data";
-import { TransactionQueryParams } from "@/lib/definitions";
-import { formatDate, getMonthFirstDate, getMonthLastDate } from "@/lib/utils";
+import { getDates } from "@/lib/utils";
 import TransactionList from "@/components/dashboard/transaction-list";
-import CategoryChart from "@/components/dashboard/category-chart";
+import { TransactionSortType, TransactionTypeType } from "@/lib/definitions";
+import CategoryCharts from "@/components/dashboard/category-charts";
 
 // TODO: !!! add calender filter to show different data: this month, this year, latest year, util now, custom
 // TODO: !!! enhance fetch API
@@ -21,65 +21,21 @@ import CategoryChart from "@/components/dashboard/category-chart";
 // TODO: add logs for each function
 // TODO: add error status/page for each component
 // TODO: set defauly currency for the ledger
-// TODO: replace today
-const today = new Date("2025-02-20");
-const year = today.getFullYear();
-const monthIndex = today.getMonth();
-const startDate = getMonthFirstDate(year, monthIndex);
-const endDate = getMonthLastDate(year, monthIndex);
-const ledgerCurrency = "EUR";
+export default async function Page(props: {
+  searchParams?: Promise<{
+    start?: string;
+    end?: string;
+    page?: string;
+  }>;
+}) {
+  const params = await props.searchParams;
+  const start = params?.start || getDates("this_month").start;
+  const end = params?.end || getDates("this_month").end;
+  console.info(`Dashboard date range from ${start} to ${end}`);
 
-const balanceCardQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "all",
-};
-
-const spendingTrendQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "expense",
-  groupBy: "day",
-};
-
-const earningTrendQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "income",
-  groupBy: "day",
-};
-
-const categorySpendingQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "expense",
-  groupBy: "category",
-  sortBy: "amount",
-};
-const recentSpendingQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "expense",
-  sortBy: "date",
-  orderBy: "DESC",
-  limit: 5,
-};
-const topSpendingQuery: Partial<TransactionQueryParams> = {
-  startDate: formatDate(startDate),
-  endDate: formatDate(endDate),
-  transactionType: "expense",
-  sortBy: "amount",
-  orderBy: "ASC",
-  limit: 5,
-};
-
-export default async function Page() {
+  const ledgerCurrency = "EUR";
   const currencyRates = await fetchCurrencyRates(ledgerCurrency);
-  console.info(
-    `Succeed to fetch currency rate on ${currencyRates.date}: ${JSON.stringify(
-      currencyRates.rates
-    )}`
-  );
+  console.info(`Succeed to fetch currency rate on ${currencyRates.date}`);
 
   return (
     <main>
@@ -88,8 +44,8 @@ export default async function Page() {
           <Suspense fallback={<CardSkeleton />}>
             <BalanceCard
               defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates as Record<string, number>}
-              query={balanceCardQuery}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
             />
           </Suspense>
         </Col>
@@ -100,8 +56,9 @@ export default async function Page() {
             <TransactionLineChart
               title="Spending"
               defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates as Record<string, number>}
-              query={spendingTrendQuery}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.EXPENSE}
             />
           </Suspense>
         </Col>
@@ -110,8 +67,9 @@ export default async function Page() {
             <TransactionLineChart
               title="Earning"
               defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates as Record<string, number>}
-              query={earningTrendQuery}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
             />
           </Suspense>
         </Col>
@@ -119,10 +77,25 @@ export default async function Page() {
       <Row>
         <Col span={24}>
           <Suspense fallback={<PieChartSkeleton />}>
-            <CategoryChart
+            <CategoryCharts
+              title="Spending Category Overview"
               defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates as Record<string, number>}
-              query={categorySpendingQuery}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.EXPENSE}
+            />
+          </Suspense>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <Suspense fallback={<PieChartSkeleton />}>
+            <CategoryCharts
+              title="Earning Category Overview"
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
             />
           </Suspense>
         </Col>
@@ -131,14 +104,43 @@ export default async function Page() {
         <Col span={12}>
           <Suspense fallback={<ListSkeleton />}>
             <TransactionList
-              title="Recent Spendings"
-              query={recentSpendingQuery}
+              title="Latest Spendings"
+              timeRange={{ start, end }}
+              type={TransactionTypeType.EXPENSE}
+              sort={TransactionSortType.DATE}
             />
           </Suspense>
         </Col>
         <Col span={12}>
           <Suspense fallback={<ListSkeleton />}>
-            <TransactionList title="Top Spendings" query={topSpendingQuery} />
+            <TransactionList
+              title="Top Spendings"
+              timeRange={{ start, end }}
+              type={TransactionTypeType.EXPENSE}
+              sort={TransactionSortType.AMOUNT}
+            />
+          </Suspense>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <Suspense fallback={<ListSkeleton />}>
+            <TransactionList
+              title="Latest Earnings"
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
+              sort={TransactionSortType.DATE}
+            />
+          </Suspense>
+        </Col>
+        <Col span={12}>
+          <Suspense fallback={<ListSkeleton />}>
+            <TransactionList
+              title="Top Earnings"
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
+              sort={TransactionSortType.AMOUNT}
+            />
           </Suspense>
         </Col>
       </Row>

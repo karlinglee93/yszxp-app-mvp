@@ -2,7 +2,7 @@
 import Layout from "antd/lib/layout";
 
 import SideNav from "@/components/dashboard/side-nav";
-import { Select } from "antd";
+import { Flex, Select } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getDates } from "@/lib/utils";
 
@@ -27,19 +27,22 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       </Sider>
       <Layout>
         <Header>
-          <Select
-            defaultValue="this_month"
-            style={{ width: 120 }}
-            onChange={handleChange}
-            options={[
-              { value: "this_month", label: "This month" },
-              { value: "last_30_days", label: "Last 30 days" },
-              { value: "this_year", label: "This year" },
-              { value: "last_12_months", label: "Last 12 months" },
-              { value: "from_start", label: "From start" },
-              { value: "custom", label: "Custom" },
-            ]}
-          />
+          <Flex justify="flex-end" align="center" style={{ height: "100%" }}>
+            <Select
+              defaultValue="this_month"
+              style={{ width: 120 }}
+              onChange={handleChange}
+              options={[
+                // TODO: select one single month / year
+                { value: "this_month", label: "This month" },
+                { value: "last_30_days", label: "Last 30 days" },
+                { value: "this_year", label: "This year" },
+                { value: "last_12_months", label: "Last 12 months" },
+                { value: "from_start", label: "From start" },
+                { value: "custom", label: "Custom" },
+              ]}
+            />
+          </Flex>
         </Header>
         <Content>{children}</Content>
         <Footer>Footer</Footer>

@@ -5,13 +5,14 @@ import { Card, Flex, Progress, Statistic } from "antd";
 export default function ClientCard({
   income,
   expense,
+  balance,
   currency = "€",
 }: {
   income: number;
   expense: number;
+  balance: number;
   currency: string;
 }) {
-  const balance = income + expense;
   const total = income - expense;
   const expensePercent = formatPercentage(expense / total);
   const incomePercent = formatPercentage(income / total);

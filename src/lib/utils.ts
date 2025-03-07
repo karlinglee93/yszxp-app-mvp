@@ -1,13 +1,4 @@
-// import CurrencyConverter from 'currency-converter-lt';
-
-// export const convertCurrency: number = async (amount: number, currency: string, defaultCurrency: string) => {
-//   if (currency !== defaultCurrency) {
-//     const currencyConverter = new CurrencyConverter({ from: `${currency}`, to: `${defaultCurrency}`, amount: amount });
-//     return await currencyConverter.convert();
-//   }
-
-//   return amount;
-// }
+import { TransactionType } from "./definitions";
 
 export const formatAmount = (amount: number | string) => {
   if (typeof amount === "string")
@@ -19,28 +10,27 @@ export const formatPercentage = (persentage: number) => {
   return Math.abs(Math.round(persentage * 100));
 };
 
-export const generateFullDates = (startDate: Date, endDate: Date) => {
+export const generateFullDates = (
+  startDate: Date | string,
+  endDate: Date | string
+) => {
+  const start = typeof startDate === "string" ? new Date(startDate) : startDate;
+  const end = typeof endDate === "string" ? new Date(endDate) : endDate;
   const dates = [];
-  const curDate = new Date(startDate);
+  const current = new Date(start);
 
-  while (curDate <= endDate) {
-    dates.push(new Date(curDate));
-    curDate.setDate(curDate.getDate() + 1);
+  while (current <= end) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
   }
 
   return dates;
 };
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: Date | string): string => {
+  if (typeof date === "string")
+    return new Date(date).toISOString().split("T")[0];
   return date.toISOString().split("T")[0];
-};
-
-export const getMonthFirstDate = (year: number, monthIndex: number) => {
-  return new Date(year, monthIndex, 1);
-};
-
-export const getMonthLastDate = (year: number, monthIndex: number) => {
-  return new Date(year, monthIndex + 1, 0);
 };
 
 export const getDates = (type: string): { start: string; end: string } => {
@@ -83,4 +73,41 @@ export const getDates = (type: string): { start: string; end: string } => {
 
 export const convertCurrency = (value: number, rate: number) => {
   return formatAmount(value / rate);
+};
+
+export const calculateTotalAmount = (
+  transactions: TransactionType[],
+  defaultCurrency: string,
+  rates: Record<string, number>
+) => {
+  const totalAmount = transactions.reduce(
+    (
+      acc: { expense: number; income: number; balance: number },
+      item: TransactionType
+    ) => {
+      const amount = parseFloat(item.amount);
+      const transactionCurrency = item.currency_name;
+
+      let currencyRate = 1;
+      if (transactionCurrency !== defaultCurrency) {
+        currencyRate = rates[transactionCurrency];
+        console.info(
+          `Different currency is used in the transaction on ${item.created_at}: amount: ${item.amount}, currency: ${item.currency_name}
+          the currency rate is ${currencyRate}`
+        );
+      }
+
+      if (amount < 0) {
+        acc.expense = acc.expense + convertCurrency(amount, currencyRate);
+      } else if (amount > 0) {
+        acc.income = acc.income + convertCurrency(amount, currencyRate);
+      }
+      acc.balance = acc.balance + convertCurrency(amount, currencyRate);
+
+      return acc;
+    },
+    { expense: 0, income: 0, balance: 0 }
+  );
+
+  return totalAmount;
 };
