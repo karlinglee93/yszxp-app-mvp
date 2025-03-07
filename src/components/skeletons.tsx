@@ -3,6 +3,10 @@ export const DashboardSkeleton = () => {
   return <div>Loading Dashboard</div>;
 };
 
+export const TransactionsSkeleton = () => {
+  return <div>Loading Transactions</div>;
+};
+
 export const CardSkeleton = () => {
   return <div>Loading Card</div>;
 };
