@@ -13,6 +13,7 @@ import { getDates } from "@/lib/utils";
 import TransactionList from "@/components/dashboard/transaction-list";
 import { TransactionSortType, TransactionTypeType } from "@/lib/definitions";
 import CategoryCharts from "@/components/dashboard/category-charts";
+import { TransactionTabs } from "@/components/dashboard/transaction-tabs";
 
 // TODO: !!! add calender filter to show different data: this month, this year, latest year, util now, custom
 // TODO: !!! enhance fetch API
@@ -37,19 +38,8 @@ export default async function Page(props: {
   const currencyRates = await fetchCurrencyRates(ledgerCurrency);
   console.info(`Succeed to fetch currency rate on ${currencyRates.date}`);
 
-  return (
-    <main>
-      <Row>
-        <Col span={12}>
-          <Suspense fallback={<CardSkeleton />}>
-            <BalanceCard
-              defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates}
-              timeRange={{ start, end }}
-            />
-          </Suspense>
-        </Col>
-      </Row>
+  const expenseChildren = (
+    <div>
       <Row>
         <Col span={12}>
           <Suspense fallback={<LineChartSkeleton />}>
@@ -59,17 +49,6 @@ export default async function Page(props: {
               rates={currencyRates.rates}
               timeRange={{ start, end }}
               type={TransactionTypeType.EXPENSE}
-            />
-          </Suspense>
-        </Col>
-        <Col span={12}>
-          <Suspense fallback={<LineChartSkeleton />}>
-            <TransactionLineChart
-              title="Earning"
-              defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates}
-              timeRange={{ start, end }}
-              type={TransactionTypeType.INCOME}
             />
           </Suspense>
         </Col>
@@ -83,19 +62,6 @@ export default async function Page(props: {
               rates={currencyRates.rates}
               timeRange={{ start, end }}
               type={TransactionTypeType.EXPENSE}
-            />
-          </Suspense>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Suspense fallback={<PieChartSkeleton />}>
-            <CategoryCharts
-              title="Earning Category Overview"
-              defaultCurrency={ledgerCurrency}
-              rates={currencyRates.rates}
-              timeRange={{ start, end }}
-              type={TransactionTypeType.INCOME}
             />
           </Suspense>
         </Col>
@@ -122,6 +88,36 @@ export default async function Page(props: {
           </Suspense>
         </Col>
       </Row>
+    </div>
+  );
+  const incomeChildren = (
+    <div>
+      <Row>
+        <Col span={12}>
+          <Suspense fallback={<LineChartSkeleton />}>
+            <TransactionLineChart
+              title="Earning"
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
+            />
+          </Suspense>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <Suspense fallback={<PieChartSkeleton />}>
+            <CategoryCharts
+              title="Earning Category Overview"
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+              type={TransactionTypeType.INCOME}
+            />
+          </Suspense>
+        </Col>
+      </Row>
       <Row>
         <Col span={12}>
           <Suspense fallback={<ListSkeleton />}>
@@ -144,6 +140,26 @@ export default async function Page(props: {
           </Suspense>
         </Col>
       </Row>
+    </div>
+  );
+
+  return (
+    <main>
+      <Row>
+        <Col span={12}>
+          <Suspense fallback={<CardSkeleton />}>
+            <BalanceCard
+              defaultCurrency={ledgerCurrency}
+              rates={currencyRates.rates}
+              timeRange={{ start, end }}
+            />
+          </Suspense>
+        </Col>
+      </Row>
+      <TransactionTabs
+        expenseChildren={expenseChildren}
+        incomeChildren={incomeChildren}
+      />
     </main>
   );
 }

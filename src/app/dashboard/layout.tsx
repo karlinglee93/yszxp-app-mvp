@@ -34,6 +34,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               onChange={handleChange}
               options={[
                 // TODO: select one single month / year
+                // TODO: enhance to display the oldest data if the timerange is too long
+                // TODO: enhance components title to align with date picker
                 { value: "this_month", label: "This month" },
                 { value: "last_30_days", label: "Last 30 days" },
                 { value: "this_year", label: "This year" },
