@@ -9,6 +9,7 @@ import {
   formatAmount,
   formatDate,
   generateFullDates,
+  getNumberOfPastDays,
 } from "@/lib/utils";
 import { Card } from "antd";
 import { TotalAmountByDateType, TransactionTypeType } from "@/lib/definitions";
@@ -23,19 +24,16 @@ export default async function TransactionLineChart({
   title: string;
   defaultCurrency: string;
   rates: Record<string, number>;
-  timeRange: { start: string; end: string };
+  timeRange: string;
   type: TransactionTypeType;
 }) {
-  const start = formatDate(timeRange.start);
-  const end = formatDate(timeRange.end);
-
   let totalAmountsByDate: TotalAmountByDateType[] = [];
   if (type === TransactionTypeType.EXPENSE) {
-    totalAmountsByDate = await fetchExpenseTotalAmountByDate(start, end);
+    totalAmountsByDate = await fetchExpenseTotalAmountByDate(timeRange);
   } else if (type === TransactionTypeType.INCOME) {
-    totalAmountsByDate = await fetchIncomeTotalAmountByDate(start, end);
+    totalAmountsByDate = await fetchIncomeTotalAmountByDate(timeRange);
   } else if (type === TransactionTypeType.ALL) {
-    totalAmountsByDate = await fetchTotalAmountByDate(start, end);
+    totalAmountsByDate = await fetchTotalAmountByDate(timeRange);
   } else {
     throw Error(`No such transaction type: ${type}`);
   }
@@ -69,7 +67,8 @@ export default async function TransactionLineChart({
     return;
   }
 
-  const fullDates = generateFullDates(start, end);
+  const fullDates = generateFullDates(timeRange);
+  console.log(fullDates)
   const completedData = fullDates.map((date) => {
     const found = results.find(
       (item) => new Date(item.date).getTime() === date.getTime()
@@ -79,9 +78,7 @@ export default async function TransactionLineChart({
       total_amount: Math.abs(formatAmount(found ? found.total_amount : 0)),
     };
   });
-  const numberOfPastDays = Math.ceil(
-    (new Date().getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const numberOfPastDays = getNumberOfPastDays(timeRange);
   const averageAmount =
     results.reduce((acc, item) => acc + item.total_amount, 0) /
     numberOfPastDays;

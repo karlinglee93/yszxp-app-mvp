@@ -27,7 +27,7 @@ async function fetchCurrencyRates(
 
 // TODO: add where user_id
 // Fetch each transaction data, including income and expense
-async function fetchTransactions(start: string, end: string) {
+async function fetchTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
@@ -37,7 +37,7 @@ async function fetchTransactions(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
       ORDER BY t.created_at ASC`;
 
     return transactions.rows;
@@ -47,7 +47,7 @@ async function fetchTransactions(start: string, end: string) {
   }
 }
 
-async function fetchLatestExpenseTransactions(start: string, end: string) {
+async function fetchLatestExpenseTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
@@ -57,7 +57,7 @@ async function fetchLatestExpenseTransactions(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount < 0
       ORDER BY t.created_at DESC
       LIMIT 5`;
@@ -69,7 +69,7 @@ async function fetchLatestExpenseTransactions(start: string, end: string) {
   }
 }
 
-async function fetchTopExpenseTransactions(start: string, end: string) {
+async function fetchTopExpenseTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
@@ -79,7 +79,7 @@ async function fetchTopExpenseTransactions(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount < 0
       ORDER BY t.amount ASC
       LIMIT 5`;
@@ -91,7 +91,7 @@ async function fetchTopExpenseTransactions(start: string, end: string) {
   }
 }
 
-async function fetchLatestIncomeTransactions(start: string, end: string) {
+async function fetchLatestIncomeTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
@@ -101,7 +101,7 @@ async function fetchLatestIncomeTransactions(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount > 0
       ORDER BY t.created_at DESC
       LIMIT 5`;
@@ -113,7 +113,7 @@ async function fetchLatestIncomeTransactions(start: string, end: string) {
   }
 }
 
-async function fetchTopIncomeTransactions(start: string, end: string) {
+async function fetchTopIncomeTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
@@ -123,7 +123,7 @@ async function fetchTopIncomeTransactions(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount > 0
       ORDER BY t.amount DESC
       LIMIT 5`;
@@ -135,7 +135,7 @@ async function fetchTopIncomeTransactions(start: string, end: string) {
   }
 }
 
-async function fetchExpenseTotalAmountByDate(start: string, end: string) {
+async function fetchExpenseTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
@@ -145,7 +145,7 @@ async function fetchExpenseTotalAmountByDate(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount < 0
       GROUP BY date, currency
       ORDER BY date ASC`;
@@ -157,7 +157,7 @@ async function fetchExpenseTotalAmountByDate(start: string, end: string) {
   }
 }
 
-async function fetchIncomeTotalAmountByDate(start: string, end: string) {
+async function fetchIncomeTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
@@ -167,7 +167,7 @@ async function fetchIncomeTotalAmountByDate(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount > 0
       GROUP BY date, currency
       ORDER BY date ASC`;
@@ -179,7 +179,7 @@ async function fetchIncomeTotalAmountByDate(start: string, end: string) {
   }
 }
 
-async function fetchTotalAmountByDate(start: string, end: string) {
+async function fetchTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
@@ -189,7 +189,7 @@ async function fetchTotalAmountByDate(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
       GROUP BY date, currency
       ORDER BY date ASC`;
 
@@ -200,7 +200,7 @@ async function fetchTotalAmountByDate(start: string, end: string) {
   }
 }
 
-async function fetchExpenseTotalAmountByCategory(start: string, end: string) {
+async function fetchExpenseTotalAmountByCategory(timeRange: string) {
   try {
     const expenseAmountsByCategory = await sql<TotalAmountByCategoryType>`
       SELECT 
@@ -210,7 +210,7 @@ async function fetchExpenseTotalAmountByCategory(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount < 0
       GROUP BY category, currency
       ORDER BY total_amount ASC`;
@@ -222,7 +222,7 @@ async function fetchExpenseTotalAmountByCategory(start: string, end: string) {
   }
 }
 
-async function fetchIncomeTotalAmountByCategory(start: string, end: string) {
+async function fetchIncomeTotalAmountByCategory(timeRange: string) {
   try {
     const expenseAmountsByCategory = await sql<TotalAmountByCategoryType>`
       SELECT 
@@ -232,7 +232,7 @@ async function fetchIncomeTotalAmountByCategory(start: string, end: string) {
       JOIN currencies cur ON t.currency_id = cur.currency_id
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
-      WHERE t.created_at BETWEEN ${start} AND ${end}
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
         AND t.amount > 0
       GROUP BY category, currency
       ORDER BY total_amount DESC`;

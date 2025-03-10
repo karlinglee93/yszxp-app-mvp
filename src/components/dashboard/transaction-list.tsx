@@ -6,9 +6,12 @@ import {
   fetchTopExpenseTransactions,
   fetchTopIncomeTransactions,
 } from "@/lib/data";
-import { TransactionSortType, TransactionType, TransactionTypeType } from "@/lib/definitions";
+import {
+  TransactionSortType,
+  TransactionType,
+  TransactionTypeType,
+} from "@/lib/definitions";
 import ClientList from "@/components/client/list";
-import { formatDate } from "@/lib/utils";
 
 export default async function TransactionList({
   title,
@@ -17,27 +20,25 @@ export default async function TransactionList({
   sort,
 }: {
   title: string;
-  timeRange: { start: string; end: string };
+  timeRange: string;
   type: TransactionTypeType;
   sort: TransactionSortType;
 }) {
   let transactions: TransactionType[] = [];
-  const start = formatDate(timeRange.start);
-  const end = formatDate(timeRange.end);
 
   if (type === TransactionTypeType.EXPENSE) {
     if (sort === TransactionSortType.AMOUNT) {
-      transactions = await fetchTopExpenseTransactions(start, end);
+      transactions = await fetchTopExpenseTransactions(timeRange);
     } else if (sort === TransactionSortType.DATE) {
-      transactions = await fetchLatestExpenseTransactions(start, end);
+      transactions = await fetchLatestExpenseTransactions(timeRange);
     } else {
       throw Error(`No such transaction type and sort: ${type}, ${sort}`);
     }
   } else if (type === TransactionTypeType.INCOME) {
     if (sort === TransactionSortType.AMOUNT) {
-      transactions = await fetchTopIncomeTransactions(start, end);
+      transactions = await fetchTopIncomeTransactions(timeRange);
     } else if (sort === TransactionSortType.DATE) {
-      transactions = await fetchLatestIncomeTransactions(start, end);
+      transactions = await fetchLatestIncomeTransactions(timeRange);
     } else {
       throw Error(`No such transaction type and sort: ${type}, ${sort}`);
     }

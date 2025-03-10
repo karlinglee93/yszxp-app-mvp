@@ -10,14 +10,27 @@ export const formatPercentage = (persentage: number) => {
   return Math.abs(Math.round(persentage * 100));
 };
 
-export const generateFullDates = (
-  startDate: Date | string,
-  endDate: Date | string
-) => {
-  const start = typeof startDate === "string" ? new Date(startDate) : startDate;
-  const end = typeof endDate === "string" ? new Date(endDate) : endDate;
+export const generateFullDates = (timeRange: string) => {
+  let start: Date;
+  let end: Date;
+  const dateArr = timeRange.split("-");
+  if (dateArr.length === 1) {
+    // handle monthly
+    const year = Number(dateArr[0]);
+    start = new Date(year, 1, 1);
+    end = new Date(year, 12, 31);
+  } else if (dateArr.length === 2) {
+    // handle daily
+    const year = Number(dateArr[0]);
+    const monthIndex = Number(dateArr[1]);
+    start = new Date(year, monthIndex - 1, 1);
+    end = new Date(year, monthIndex, 0);
+  } else {
+    throw new Error(`Incorrect time range format: ${timeRange}`);
+  }
+  // TODO: !!! handle monthly
   const dates = [];
-  const current = new Date(start);
+  const current = start;
 
   while (current <= end) {
     dates.push(new Date(current));
@@ -25,6 +38,20 @@ export const generateFullDates = (
   }
 
   return dates;
+};
+
+export const getNumberOfPastDays = (timeRange: string) => {
+  const isCurrency = true;
+  // TODO: !!! current year or month
+  // TODO: !!! other year or month
+  if (isCurrency) {
+    return Math.ceil(
+      (new Date().getTime() - new Date(timeRange).getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
+  } else {
+    return 30;
+  }
 };
 
 export const formatDate = (date: Date | string): string => {
@@ -60,7 +87,6 @@ export const getDates = (type: string): { start: string; end: string } => {
         start: formatDate(new Date("2000-01-01")),
         end: formatDate(today),
       };
-    // TODO: handle custom date
     case "custom":
     case "this_month":
     default:

@@ -10,7 +10,6 @@ import {
 import {
   convertCurrency,
   formatAmount,
-  formatDate,
   formatPercentage,
 } from "@/lib/utils";
 import { Card, Flex } from "antd";
@@ -26,20 +25,14 @@ export default async function CategoryCharts({
   title: string;
   defaultCurrency: string;
   rates: Record<string, number>;
-  timeRange: { start: string; end: string };
+  timeRange: string;
   type: TransactionTypeType;
 }) {
-  const start = formatDate(timeRange.start);
-  const end = formatDate(timeRange.end);
-
   let totalAmountsByCategory: TotalAmountByCategoryType[] = [];
   if (type === TransactionTypeType.EXPENSE) {
-    totalAmountsByCategory = await fetchExpenseTotalAmountByCategory(
-      start,
-      end
-    );
+    totalAmountsByCategory = await fetchExpenseTotalAmountByCategory(timeRange);
   } else if (type === TransactionTypeType.INCOME) {
-    totalAmountsByCategory = await fetchIncomeTotalAmountByCategory(start, end);
+    totalAmountsByCategory = await fetchIncomeTotalAmountByCategory(timeRange);
   } else {
     throw Error(`No such transaction type: ${type}`);
   }

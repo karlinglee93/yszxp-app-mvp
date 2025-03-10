@@ -9,30 +9,30 @@ import {
 import { Col, Row } from "antd";
 import { Suspense } from "react";
 import { fetchCurrencyRates } from "@/lib/data";
-import { getDates } from "@/lib/utils";
 import TransactionList from "@/components/dashboard/transaction-list";
 import { TransactionSortType, TransactionTypeType } from "@/lib/definitions";
 import CategoryCharts from "@/components/dashboard/category-charts";
 import { TransactionTabs } from "@/components/dashboard/transaction-tabs";
+import dayjs from "dayjs";
 
-// TODO: !!! add calender filter to show different data: this month, this year, latest year, util now, custom
-// TODO: !!! enhance fetch API
+// TODO: !!! add calender filter to show different data: this month, this year, util now, latest year, custom
+// TODO: to hide/combine the pie proportions smaller than X%
 // TODO: add category color and avatar configs
 // TODO: handle 0 values, unit test
 // TODO: add logs for each function
-// TODO: add error status/page for each component
-// TODO: set defauly currency for the ledger
+// TODO: add error status/404 page for each component
+// TODO: fetch defauly currency for the ledger
 export default async function Page(props: {
   searchParams?: Promise<{
-    start?: string;
-    end?: string;
+    date?: string;
     page?: string;
   }>;
 }) {
   const params = await props.searchParams;
-  const start = params?.start || getDates("this_month").start;
-  const end = params?.end || getDates("this_month").end;
-  console.info(`Dashboard date range from ${start} to ${end}`);
+  const timeRange = params?.date || `${dayjs().format("YYYY-MM")}`;
+  // const start = params?.start || getDates("this_month").start;
+  // const end = params?.end || getDates("this_month").end;
+  console.info(`Dashboard data on: ${timeRange}`);
 
   const ledgerCurrency = "EUR";
   const currencyRates = await fetchCurrencyRates(ledgerCurrency);
@@ -47,7 +47,7 @@ export default async function Page(props: {
               title="Spending"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.EXPENSE}
             />
           </Suspense>
@@ -60,7 +60,7 @@ export default async function Page(props: {
               title="Spending Category Overview"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.EXPENSE}
             />
           </Suspense>
@@ -71,7 +71,7 @@ export default async function Page(props: {
           <Suspense fallback={<ListSkeleton />}>
             <TransactionList
               title="Latest Spendings"
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.EXPENSE}
               sort={TransactionSortType.DATE}
             />
@@ -81,7 +81,7 @@ export default async function Page(props: {
           <Suspense fallback={<ListSkeleton />}>
             <TransactionList
               title="Top Spendings"
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.EXPENSE}
               sort={TransactionSortType.AMOUNT}
             />
@@ -99,7 +99,7 @@ export default async function Page(props: {
               title="Earning"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.INCOME}
             />
           </Suspense>
@@ -112,7 +112,7 @@ export default async function Page(props: {
               title="Earning Category Overview"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.INCOME}
             />
           </Suspense>
@@ -123,7 +123,7 @@ export default async function Page(props: {
           <Suspense fallback={<ListSkeleton />}>
             <TransactionList
               title="Latest Earnings"
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.INCOME}
               sort={TransactionSortType.DATE}
             />
@@ -133,7 +133,7 @@ export default async function Page(props: {
           <Suspense fallback={<ListSkeleton />}>
             <TransactionList
               title="Top Earnings"
-              timeRange={{ start, end }}
+              timeRange={timeRange}
               type={TransactionTypeType.INCOME}
               sort={TransactionSortType.AMOUNT}
             />
@@ -151,7 +151,7 @@ export default async function Page(props: {
             <BalanceCard
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
-              timeRange={{ start, end }}
+              timeRange={timeRange}
             />
           </Suspense>
         </Col>

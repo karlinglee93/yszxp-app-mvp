@@ -3,7 +3,6 @@ import { Amount } from "@/lib/definitions";
 import { formatAmount, formatPercentage } from "@/lib/utils";
 import { Pie } from "@ant-design/charts";
 
-// TODO: to hide/combine the proportions smaller than X%
 export default function ClientPieChart({
   datasource,
   legend,

@@ -10,6 +10,12 @@ export enum TransactionSortType {
   AMOUNT = "amount",
 }
 
+export enum PickerType {
+  MONTH = "month",
+  YEAR = "year",
+  FROM_START = "from_start",
+}
+
 export type Transaction = {
   id: string;
   created_at: object;

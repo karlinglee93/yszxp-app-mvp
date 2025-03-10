@@ -1,6 +1,6 @@
 import ClientCard from "@/components/client/card";
 import { fetchTransactions } from "@/lib/data";
-import { calculateTotalAmount, formatDate } from "@/lib/utils";
+import { calculateTotalAmount } from "@/lib/utils";
 
 export default async function BalanceCard({
   defaultCurrency,
@@ -9,12 +9,9 @@ export default async function BalanceCard({
 }: {
   defaultCurrency: string;
   rates: Record<string, number>;
-  timeRange: { start: string; end: string };
+  timeRange: string;
 }) {
-  const transactions = await fetchTransactions(
-    formatDate(timeRange.start),
-    formatDate(timeRange.end)
-  );
+  const transactions = await fetchTransactions(timeRange);
 
   if (!Array.isArray(transactions)) {
     console.error("Error fetching transactions:", transactions);
