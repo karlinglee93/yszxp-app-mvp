@@ -59,7 +59,7 @@ export default async function CategoryCharts({
 
     return acc;
   }, {});
-  const results = Object.values(tempTotalAmountsByCategory);
+  const results = Object.values(tempTotalAmountsByCategory).sort((a, b) => b.total_amount - a.total_amount);
   const maxAmount = Math.max(...results.map((item) => item.total_amount));
 
   if (!Array.isArray(results)) {

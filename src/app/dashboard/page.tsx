@@ -30,8 +30,6 @@ export default async function Page(props: {
 }) {
   const params = await props.searchParams;
   const timeRange = params?.date || `${dayjs().format("YYYY-MM")}`;
-  // const start = params?.start || getDates("this_month").start;
-  // const end = params?.end || getDates("this_month").end;
   console.info(`Dashboard data on: ${timeRange}`);
 
   const ledgerCurrency = "EUR";

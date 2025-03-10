@@ -14,17 +14,18 @@ export const generateFullDates = (timeRange: string) => {
   let start: Date;
   let end: Date;
   const dateArr = timeRange.split("-");
+
   if (dateArr.length === 1) {
     // handle monthly
     const year = Number(dateArr[0]);
-    start = new Date(year, 1, 1);
-    end = new Date(year, 12, 31);
+    start = new Date(year, 0, 1);
+    end = new Date(year, 11, 31);
   } else if (dateArr.length === 2) {
     // handle daily
     const year = Number(dateArr[0]);
-    const monthIndex = Number(dateArr[1]);
-    start = new Date(year, monthIndex - 1, 1);
-    end = new Date(year, monthIndex, 0);
+    const month = Number(dateArr[1]);
+    start = new Date(year, month - 1, 1);
+    end = new Date(year, month, 0);
   } else {
     throw new Error(`Incorrect time range format: ${timeRange}`);
   }
@@ -41,16 +42,33 @@ export const generateFullDates = (timeRange: string) => {
 };
 
 export const getNumberOfPastDays = (timeRange: string) => {
-  const isCurrency = true;
-  // TODO: !!! current year or month
-  // TODO: !!! other year or month
-  if (isCurrency) {
+  let isCurrency = true;
+  let isMonthSelected = true;
+  const dateArr = timeRange.split("-");
+
+  if (dateArr.length === 1) {
+    isMonthSelected = false;
+    isCurrency = new Date(timeRange).getFullYear() === new Date().getFullYear();
+  } else if (dateArr.length === 2) {
+    isMonthSelected = true;
+    isCurrency =
+      new Date(timeRange).getFullYear() === new Date().getFullYear() &&
+      new Date(timeRange).getMonth() === new Date().getMonth();
+  } else {
+    throw new Error(`Incorrect time range format: ${timeRange}`);
+  }
+
+  if (isCurrency && isMonthSelected) {
     return Math.ceil(
       (new Date().getTime() - new Date(timeRange).getTime()) /
         (1000 * 60 * 60 * 24)
     );
+  } else if (!isCurrency && isMonthSelected) {
+    return new Date(Number(dateArr[0]), Number(dateArr[1]), 0).getDate();
+  } else if (isCurrency && !isMonthSelected) {
+    return new Date(timeRange).getMonth() + 1;
   } else {
-    return 30;
+    return 12;
   }
 };
 
