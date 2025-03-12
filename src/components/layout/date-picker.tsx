@@ -17,15 +17,18 @@ export default function CustomDatePicker() {
   const { replace } = useRouter();
 
   const handleChange = (date: Dayjs) => {
-    let parsedDate = "";
-    if (type === PickerType.MONTH) {
-      parsedDate = dayjs(date).format("YYYY-MM");
-    } else if (type === PickerType.YEAR) {
-      parsedDate = dayjs(date).format("YYYY");
-    }
-
     const params = new URLSearchParams(searchParams);
-    params.set("date", parsedDate);
+    if (date) {
+      let parsedDate = "";
+      if (type === PickerType.MONTH) {
+        parsedDate = dayjs(date).format("YYYY-MM");
+      } else if (type === PickerType.YEAR) {
+        parsedDate = dayjs(date).format("YYYY");
+      }
+      params.set("date", parsedDate);
+    } else {
+      params.delete("date");
+    }
     replace(`${pathname}?${params.toString()}`);
   };
 
@@ -37,7 +40,11 @@ export default function CustomDatePicker() {
         <Option value={PickerType.FROM_START}>From start</Option>
       </Select>
       {type !== PickerType.FROM_START && (
-        <DatePicker picker={type} onChange={handleChange} />
+        <DatePicker
+          picker={type}
+          onChange={handleChange}
+          defaultValue={dayjs()}
+        />
       )}
     </Space>
   );

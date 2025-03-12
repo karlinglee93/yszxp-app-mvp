@@ -30,6 +30,7 @@ export default async function TransactionLineChart({
   type: TransactionTypeType;
 }) {
   // TODO: fix expense chart and income chart width rendering issue
+  // TODO: fix x, y axis display date issue
   const { isMonthQuery } = getDateType(timeRange);
   let totalAmountsByDate: TotalAmountByDateType[] = [];
   if (type === TransactionTypeType.EXPENSE) {
@@ -58,7 +59,7 @@ export default async function TransactionLineChart({
       acc[date].total_amount += amount;
     } else {
       acc[date] = {
-        date: formatDate(item.date),
+        date: date,
         total_amount: amount,
       };
     }
@@ -66,7 +67,6 @@ export default async function TransactionLineChart({
     return acc;
   }, {});
   const results = Object.values(tempTotalAmountsByDate);
-
   if (!Array.isArray(results)) {
     console.error("Error fetching transactions:", results);
     return;
@@ -74,15 +74,18 @@ export default async function TransactionLineChart({
 
   const fullDates = generateFullDates(timeRange);
   const completedData = fullDates.map((date) => {
-    const found = results.find(
-      (item) => new Date(item.date).getTime() === date.getTime()
-    );
+    // TODO: !!!
+    const found = results.find((item) => {
+      return isMonthQuery
+        ? new Date(item.date).getTime() === date.getTime()
+        : formatDateByYearAndMonth(item.date) ===
+            formatDateByYearAndMonth(date);
+    });
     return {
       date: date,
       total_amount: Math.abs(formatAmount(found ? found.total_amount : 0)),
     };
   });
-
   const averageAmountText = `Average ${isMonthQuery ? "Daily" : "Monthly"} ${
     type === TransactionTypeType.EXPENSE
       ? "Spending"

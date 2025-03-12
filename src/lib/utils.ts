@@ -52,13 +52,15 @@ export const generateFullDates = (timeRange: string) => {
     }
   } else if (!isMonthQuery) {
     const year = Number(dateArr[0]);
-    start = new Date(year, 0);
-    end = new Date(year, 11);
+    start = new Date(year, 0, 1);
+    end = new Date(year, 11, 31);
     current = start;
 
     while (current <= end) {
       dates.push(new Date(current));
-      current.setMonth(current.getMonth() + 1);
+      current.setDate(1);   
+      current.setMonth(current.getMonth() + 2)
+      current.setDate(0);  
     }
   } else {
     throw new Error(`Incorrect time range format: ${timeRange}`);

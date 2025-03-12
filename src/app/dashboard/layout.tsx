@@ -10,6 +10,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Layout>
       <Sider>
+        {/* TODO: fix selected menu issue */}
         <SideNav />
       </Sider>
       <Layout>

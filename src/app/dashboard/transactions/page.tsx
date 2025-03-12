@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 export default async function Page(props: {
   searchParams?: Promise<{
     query?: string;
-    date?: string
+    date?: string;
     page?: string;
   }>;
 }) {
@@ -24,7 +24,11 @@ export default async function Page(props: {
       </Row>
       <Row>
         <Col span={24}>
-          <TransactionTable query={query} timeRange={timeRange} page={currentPage} />
+          <TransactionTable
+            query={query}
+            timeRange={timeRange}
+            page={currentPage}
+          />
         </Col>
       </Row>
     </div>
