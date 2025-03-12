@@ -74,7 +74,6 @@ export default async function TransactionLineChart({
 
   const fullDates = generateFullDates(timeRange);
   const completedData = fullDates.map((date) => {
-    // TODO: !!!
     const found = results.find((item) => {
       return isMonthQuery
         ? new Date(item.date).getTime() === date.getTime()

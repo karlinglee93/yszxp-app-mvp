@@ -24,7 +24,6 @@ export default async function TransactionList({
   type: TransactionTypeType;
   sort: TransactionSortType;
 }) {
-  // TODO: !!!!fix income chart issues
   // TODO: fix top spendings with different currency
   let transactions: TransactionType[] = [];
 

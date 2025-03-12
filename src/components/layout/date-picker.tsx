@@ -8,13 +8,17 @@ import dayjs, { Dayjs } from "dayjs";
 const { Option } = Select;
 
 export default function CustomDatePicker() {
-  // TODO: fix selected dates and default dates unasync issue
-  // TODO: fix url issue while clearing the selected dates
   const [type, setType] = useState<PickerType>(PickerType.MONTH);
+  const [open, setOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const handleSelect = (value: PickerType) => {
+    setType(value);
+    setOpen(true);
+  };
 
   const handleChange = (date: Dayjs) => {
     const params = new URLSearchParams(searchParams);
@@ -34,7 +38,7 @@ export default function CustomDatePicker() {
 
   return (
     <Space>
-      <Select aria-label="Picker Type" value={type} onChange={setType}>
+      <Select aria-label="Picker Type" value={type} onChange={handleSelect}>
         <Option value={PickerType.MONTH}>Month</Option>
         <Option value={PickerType.YEAR}>Year</Option>
         <Option value={PickerType.FROM_START}>From start</Option>
@@ -44,6 +48,10 @@ export default function CustomDatePicker() {
           picker={type}
           onChange={handleChange}
           defaultValue={dayjs()}
+          needConfirm
+          open={open}
+          onOk={() => setOpen(false)}
+          onClick={() => setOpen(!open)}
         />
       )}
     </Space>
