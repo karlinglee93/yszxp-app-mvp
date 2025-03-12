@@ -28,6 +28,7 @@ export default async function CategoryCharts({
   timeRange: string;
   type: TransactionTypeType;
 }) {
+  // TODO: to display how many transactions made by each category
   let totalAmountsByCategory: TotalAmountByCategoryType[] = [];
   if (type === TransactionTypeType.EXPENSE) {
     totalAmountsByCategory = await fetchExpenseTotalAmountByCategory(timeRange);

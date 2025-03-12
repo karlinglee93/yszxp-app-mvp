@@ -3,11 +3,13 @@ import { formatAmount, formatPercentage } from "@/lib/utils";
 import { Card, Flex, Progress, Statistic } from "antd";
 
 export default function ClientCard({
+  title,
   income,
   expense,
   balance,
   currency = "€",
 }: {
+  title: string;
   income: number;
   expense: number;
   balance: number;
@@ -18,7 +20,7 @@ export default function ClientCard({
   const incomePercent = formatPercentage(income / total);
 
   return (
-    <Card title="Monthly Balance">
+    <Card title={title}>
       <Flex vertical gap="small">
         <Statistic
           value={`${currency} ${formatAmount(balance)}`}

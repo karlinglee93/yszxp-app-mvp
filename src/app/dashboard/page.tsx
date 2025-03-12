@@ -17,11 +17,12 @@ import dayjs from "dayjs";
 
 // TODO: !!! add calender filter to show different data: this month, this year, util now, latest year, custom
 // TODO: to hide/combine the pie proportions smaller than X%
+// TODO: interact between dashboard charts and transaction filter page
 // TODO: add category color and avatar configs
-// TODO: handle 0 values, unit test
-// TODO: add logs for each function
 // TODO: add error status/404 page for each component
 // TODO: fetch defauly currency for the ledger
+// TODO: handle 0 values, unit test
+// TODO: add logs for each function
 export default async function Page(props: {
   searchParams?: Promise<{
     date?: string;
@@ -42,7 +43,7 @@ export default async function Page(props: {
         <Col span={12}>
           <Suspense fallback={<LineChartSkeleton />}>
             <TransactionLineChart
-              title="Spending"
+              title="Spending Trend Overview"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
               timeRange={timeRange}
@@ -94,7 +95,7 @@ export default async function Page(props: {
         <Col span={12}>
           <Suspense fallback={<LineChartSkeleton />}>
             <TransactionLineChart
-              title="Earning"
+              title="Earning Trend Overview"
               defaultCurrency={ledgerCurrency}
               rates={currencyRates.rates}
               timeRange={timeRange}

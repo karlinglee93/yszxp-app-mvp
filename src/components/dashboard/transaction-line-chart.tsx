@@ -8,8 +8,10 @@ import {
   convertCurrency,
   formatAmount,
   formatDate,
+  formatDateByYearAndMonth,
   generateFullDates,
-  getNumberOfPastDays,
+  getDateType,
+  getNumberOfPastDates,
 } from "@/lib/utils";
 import { Card } from "antd";
 import { TotalAmountByDateType, TransactionTypeType } from "@/lib/definitions";
@@ -27,6 +29,8 @@ export default async function TransactionLineChart({
   timeRange: string;
   type: TransactionTypeType;
 }) {
+  // TODO: fix expense chart and income chart width rendering issue
+  const { isMonthQuery } = getDateType(timeRange);
   let totalAmountsByDate: TotalAmountByDateType[] = [];
   if (type === TransactionTypeType.EXPENSE) {
     totalAmountsByDate = await fetchExpenseTotalAmountByDate(timeRange);
@@ -37,11 +41,12 @@ export default async function TransactionLineChart({
   } else {
     throw Error(`No such transaction type: ${type}`);
   }
-
   const tempTotalAmountsByDate = totalAmountsByDate.reduce<
     Record<string, { date: string; total_amount: number }>
   >((acc, item) => {
-    const date = formatDate(item.date);
+    const date = isMonthQuery
+      ? formatDate(item.date)
+      : formatDateByYearAndMonth(item.date);
     const amount =
       item.currency === defaultCurrency
         ? formatAmount(item.total_amount)
@@ -68,7 +73,6 @@ export default async function TransactionLineChart({
   }
 
   const fullDates = generateFullDates(timeRange);
-  console.log(fullDates)
   const completedData = fullDates.map((date) => {
     const found = results.find(
       (item) => new Date(item.date).getTime() === date.getTime()
@@ -78,10 +82,18 @@ export default async function TransactionLineChart({
       total_amount: Math.abs(formatAmount(found ? found.total_amount : 0)),
     };
   });
-  const numberOfPastDays = getNumberOfPastDays(timeRange);
+
+  const averageAmountText = `Average ${isMonthQuery ? "Daily" : "Monthly"} ${
+    type === TransactionTypeType.EXPENSE
+      ? "Spending"
+      : type === TransactionTypeType.INCOME
+      ? "Earning"
+      : "Banlance"
+  } this ${isMonthQuery ? "Month" : "Year"}: `;
+  const numberOfPastDates = getNumberOfPastDates(timeRange);
   const averageAmount =
     results.reduce((acc, item) => acc + item.total_amount, 0) /
-    numberOfPastDays;
+    numberOfPastDates;
 
   const config = {
     xField: "date",
@@ -101,16 +113,12 @@ export default async function TransactionLineChart({
   };
 
   return (
-    <Card title={`${title} Trend Overview`}>
+    <Card title={title}>
       <label>
-        Average Daily {title} This Month:{" "}
+        {averageAmountText}
         {Math.abs(formatAmount(averageAmount))}
       </label>
-      <ClientLineChart
-        datasource={completedData}
-        config={config}
-        isMonthChart={true}
-      />
+      <ClientLineChart datasource={completedData} config={config} />
     </Card>
   );
 }

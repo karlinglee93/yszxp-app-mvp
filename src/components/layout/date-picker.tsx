@@ -8,6 +8,8 @@ import dayjs, { Dayjs } from "dayjs";
 const { Option } = Select;
 
 export default function CustomDatePicker() {
+  // TODO: fix selected dates and default dates unasync issue
+  // TODO: fix url issue while clearing the selected dates
   const [type, setType] = useState<PickerType>(PickerType.MONTH);
 
   const searchParams = useSearchParams();
