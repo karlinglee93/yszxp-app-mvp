@@ -8,10 +8,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { useSearchParams } from "next/navigation";
+import dayjs from "dayjs";
 
 export default function SideNav() {
   const searchParams = useSearchParams();
-  const queryString = searchParams.get("date") ? `?date=${searchParams.get("date")}` : ""
+  const queryString = searchParams.get("date") ? `?date=${searchParams.get("date")}` : `?date=${dayjs().format("YYYY-MM")}`
   const itemProps = [
     {
       key: "dashboard",

@@ -14,8 +14,8 @@ import { TransactionSortType, TransactionTypeType } from "@/lib/definitions";
 import CategoryCharts from "@/components/dashboard/category-charts";
 import { TransactionTabs } from "@/components/dashboard/transaction-tabs";
 import dayjs from "dayjs";
+import { redirect } from "next/navigation";
 
-// TODO: !!! add calender filter to show different data: this month, this year, util now, latest year, custom
 // TODO: to hide/combine the pie proportions smaller than X%
 // TODO: interact between dashboard charts and transaction filter page
 // TODO: add category color and avatar configs
@@ -30,7 +30,10 @@ export default async function Page(props: {
   }>;
 }) {
   const params = await props.searchParams;
-  const timeRange = params?.date || `${dayjs().format("YYYY-MM")}`;
+  if (!params?.date) {
+    redirect(`/dashboard?date=${`${dayjs().format("YYYY-MM")}`}`);
+  }
+  const timeRange = params.date;
   console.info(`Dashboard data on: ${timeRange}`);
 
   const ledgerCurrency = "EUR";

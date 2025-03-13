@@ -15,8 +15,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       </Sider>
       <Layout>
         <Header>
-          {/* TODO: select one single from start
-              TODO: enhance to display the oldest data if the timerange is too long */}
+          {/* TODO: enhance to display the oldest data if the timerange is too long */}
           <DatePicker />
         </Header>
         <Content>{children}</Content>

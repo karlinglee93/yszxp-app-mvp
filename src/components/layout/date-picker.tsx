@@ -8,12 +8,14 @@ import dayjs, { Dayjs } from "dayjs";
 const { Option } = Select;
 
 export default function CustomDatePicker() {
-  const [type, setType] = useState<PickerType>(PickerType.MONTH);
-  const [open, setOpen] = useState(false);
-
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const [type, setType] = useState<PickerType>(() =>
+    searchParams.get("date")?.length === 4 ? PickerType.YEAR : PickerType.MONTH
+  );
+  const [open, setOpen] = useState(false);
 
   const handleSelect = (value: PickerType) => {
     setType(value);
@@ -38,16 +40,23 @@ export default function CustomDatePicker() {
 
   return (
     <Space>
-      <Select aria-label="Picker Type" value={type} onChange={handleSelect}>
+      <Select
+        style={{ width: 100 }}
+        aria-label="Picker Type"
+        value={type}
+        onChange={handleSelect}
+      >
         <Option value={PickerType.MONTH}>Month</Option>
         <Option value={PickerType.YEAR}>Year</Option>
-        <Option value={PickerType.FROM_START}>From start</Option>
+        <Option disabled value={PickerType.FROM_START}>
+          From start
+        </Option>
       </Select>
       {type !== PickerType.FROM_START && (
         <DatePicker
           picker={type}
           onChange={handleChange}
-          defaultValue={dayjs()}
+          defaultValue={dayjs(searchParams.get("date"))}
           needConfirm
           open={open}
           onOk={() => setOpen(false)}
