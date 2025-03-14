@@ -1,11 +1,53 @@
 import { sql } from "@vercel/postgres";
 
 import {
+  Categories,
+  Currencies,
   CurrencyRates,
+  Ledgers,
   TotalAmountByCategoryType,
   TotalAmountByDateType,
   TransactionType,
 } from "@/lib/definitions";
+
+async function fetchCurrencies() {
+  try {
+    const currencies = await sql<Currencies>`
+      select * from currencies
+    `;
+
+    return currencies.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch currencies.");
+  }
+}
+
+async function fetchCategories() {
+  try {
+    const categories = await sql<Categories>`
+      select * from categories
+    `;
+
+    return categories.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categories.");
+  }
+}
+
+async function fetchLedgers() {
+  try {
+    const ledgers = await sql<Ledgers>`
+      select * from ledgers
+    `;
+
+    return ledgers.rows[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categories.");
+  }
+}
 
 async function fetchCurrencyRates(
   currencyName: string
@@ -251,7 +293,7 @@ async function fetchFilteredTransactions(
   currentPage: number
 ): Promise<TransactionType[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  
+
   try {
     const filteredTransactions = await sql<TransactionType>`
       SELECT 
@@ -304,6 +346,9 @@ async function fetchTransactionsCount(query: string, timeRange: string) {
 }
 
 export {
+  fetchCurrencies,
+  fetchCategories,
+  fetchLedgers,
   fetchCurrencyRates,
   fetchTransactions,
   fetchLatestExpenseTransactions,

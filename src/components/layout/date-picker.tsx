@@ -13,7 +13,9 @@ export default function CustomDatePicker() {
   const { replace } = useRouter();
 
   const [type, setType] = useState<PickerType>(() =>
-    searchParams.get("date")?.length === 4 ? PickerType.YEAR : PickerType.MONTH
+    searchParams.get("date")?.split("-").length === 2
+      ? PickerType.MONTH
+      : PickerType.YEAR
   );
   const [open, setOpen] = useState(false);
 

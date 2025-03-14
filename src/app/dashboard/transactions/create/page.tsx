@@ -1,25 +1,18 @@
-// import { useState } from "react"
-import { Tabs } from "antd";
+import TransactionForm from "@/components/transacations/form";
+import { fetchCategories, fetchCurrencies, fetchLedgers } from "@/lib/data";
 
-import TransactionPanel from "@/components/transacations/transaction-panel";
+export default async function Page() {
+  const currencies = await fetchCurrencies();
+  const categories = await fetchCategories();
+  const ledgers = await fetchLedgers();
 
-const items = [
-  {
-    key: "expense-pannel",
-    label: "Expense",
-    children: <TransactionPanel type="expense" />,
-  },
-  {
-    key: "income-pannel",
-    label: "Income",
-    children: <TransactionPanel type="income" />,
-  },
-];
-
-export default function Page() {
   return (
-    <div>
-      <Tabs defaultActiveKey="expense-pannel" centered items={items} />
-    </div>
+    <main>
+      <TransactionForm
+        currencies={currencies}
+        categories={categories}
+        ledgers={ledgers}
+      />
+    </main>
   );
 }

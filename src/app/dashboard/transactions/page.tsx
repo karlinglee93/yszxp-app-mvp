@@ -1,6 +1,7 @@
+import TransactionAddButton from "@/components/transacations/add-button";
 import TransactionSearch from "@/components/transacations/transaction-search";
 import TransactionTable from "@/components/transacations/transaction-table";
-import { Col, Row } from "antd";
+import { Col, Flex, Row } from "antd";
 import dayjs from "dayjs";
 
 export default async function Page(props: {
@@ -19,7 +20,10 @@ export default async function Page(props: {
     <div>
       <Row>
         <Col span={24}>
-          <TransactionSearch />
+          <Flex>
+            <TransactionSearch />
+            <TransactionAddButton />
+          </Flex>
         </Col>
       </Row>
       <Row>

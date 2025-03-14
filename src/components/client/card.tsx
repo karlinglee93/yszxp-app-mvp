@@ -27,8 +27,8 @@ export default function ClientCard({
           precision={2}
         />
         <Flex gap="small">
-          <label style={{ whiteSpace: "nowrap", width: "25%" }}>
-            Monthly Expense
+          <label style={{ whiteSpace: "nowrap", width: "20%" }}>
+            Expense
           </label>
           <Progress
             strokeColor="red"
@@ -39,8 +39,8 @@ export default function ClientCard({
           />
         </Flex>
         <Flex gap="small">
-          <label style={{ whiteSpace: "nowrap", width: "25%" }}>
-            Monthly Income
+          <label style={{ whiteSpace: "nowrap", width: "20%" }}>
+            Income
           </label>
           <Progress
             strokeColor="green"

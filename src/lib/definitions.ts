@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 // Manually define the types that will be returned from the database
 export enum TransactionTypeType {
   EXPENSE = "expense",
@@ -74,4 +76,37 @@ export interface CurrencyRates {
   base: string;
   date: Date;
   rates: Record<string, number>;
+}
+
+export interface Currencies {
+  currency_id: string;
+  currency_name: string;
+}
+
+export interface Categories {
+  category_id: string;
+  category_name: string;
+  type: TransactionTypeType;
+}
+
+export interface Ledgers {
+  currency_id: string;
+}
+
+export interface TransactionFormType {
+  type: string;
+  category: string;
+  currency: string;
+  amount: number;
+  date: Dayjs;
+  note: string | undefined;
+}
+
+export interface FormattedTransactionFormType {
+  type: string;
+  category: string;
+  currency: string;
+  amount: number;
+  date: string;
+  note: string | undefined;
 }
