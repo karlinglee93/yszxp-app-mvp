@@ -60,7 +60,6 @@ export default function TransactionForm({
   );
 
   const handleSubmit = (values: TransactionFormType) => {
-    console.log(values);
     const formattedValues = {
       ...values,
       date: values.date.format("YYYY-MM-DD"),
@@ -95,7 +94,11 @@ export default function TransactionForm({
         </Radio.Group>
       </Form.Item>
       <Form.Item label="Category" name="category">
-        <Select placeholder="Select a category">
+        <Select
+          placeholder="Select a category"
+          showSearch
+          optionFilterProp="children"
+        >
           {categories
             .filter((i) => i.type === type)
             .map((i) => (
