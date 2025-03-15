@@ -18,7 +18,7 @@ import {
   Select,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
 import { createTransaction } from "@/lib/actions";
 import { useRouter } from "next/navigation";
@@ -54,10 +54,22 @@ export default function TransactionForm({
     </Select>
   );
 
+  const handleDateChange = (date: Dayjs) => {
+    if (date) {
+      const now = dayjs();
+      const formattedDateTime = date
+        .hour(now.hour())
+        .minute(now.minute())
+        .second(now.second());
+
+      form.setFieldValue("date", formattedDateTime);
+    }
+  };
+
   const handleSubmit = (values: TransactionFormType) => {
     const formattedValues = {
       ...values,
-      date: values.date.format("YYYY-MM-DD"),
+      date: values.date.format("YYYY-MM-DD HH:mm:ss"),
     };
     createTransaction(formattedValues);
   };
@@ -104,7 +116,7 @@ export default function TransactionForm({
         </Select>
       </Form.Item>
       <Form.Item label="Date" name="date">
-        <DatePicker format={"YYYY/MM/DD"} />
+        <DatePicker onChange={handleDateChange} format={"YYYY/MM/DD"} />
       </Form.Item>
       <Form.Item name="currency" hidden></Form.Item>
       <Form.Item label="Amount" name="amount">
