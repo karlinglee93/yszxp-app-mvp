@@ -20,6 +20,7 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function EditForm({
@@ -41,6 +42,7 @@ export default function EditForm({
 
   const [type, setType] = useState(initialType);
   const [form] = useForm();
+  const router = useRouter();
 
   const updatedCurrencies = currencies.map((currency) => ({
     ...currency,
@@ -130,8 +132,8 @@ export default function EditForm({
       </Form.Item>
       <Form.Item label={null}>
         <Flex justify="end">
-          <Button type="default" href="/dashboard/transactions">
-            Canncel
+          <Button type="default" onClick={() => router.back()}>
+            Cancel
           </Button>
           <Button type="primary" htmlType="submit">
             Submit

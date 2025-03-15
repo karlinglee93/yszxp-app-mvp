@@ -21,6 +21,7 @@ import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { createTransaction } from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
 export default function TransactionForm({
   currencies,
@@ -33,6 +34,7 @@ export default function TransactionForm({
 }) {
   const [type, setType] = useState(TransactionTypeType.EXPENSE);
   const [form] = useForm();
+  const router = useRouter();
 
   const updatedCurrencies = currencies.map((currency) => ({
     ...currency,
@@ -119,8 +121,8 @@ export default function TransactionForm({
       </Form.Item>
       <Form.Item label={null}>
         <Flex justify="end">
-          <Button type="default" href="/dashboard/transactions">
-            Canncel
+          <Button type="default" onClick={() => router.back()}>
+            Cancel
           </Button>
           <Button type="primary" htmlType="submit">
             Submit
