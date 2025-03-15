@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { Menu } from "antd";
 import {
@@ -7,12 +7,15 @@ import {
   BankOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
 
 export default function SideNav() {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const queryString = searchParams.get("date") ? `?date=${searchParams.get("date")}` : `?date=${dayjs().format("YYYY-MM")}`
+  const queryString = searchParams.get("date")
+    ? `?date=${searchParams.get("date")}`
+    : `?date=${dayjs().format("YYYY-MM")}`;
   const itemProps = [
     {
       key: "dashboard",
@@ -29,14 +32,14 @@ export default function SideNav() {
     {
       key: "personal-finance",
       label: "Personal Finance",
-      href: "/dashboard/personal-finance",
+      href: "/personal-finance",
       icon: <BankOutlined />,
       disabled: true,
     },
     {
       key: "real-estate-analysis",
       label: "Real Estate Analysis",
-      href: "/dashboard/real-estate-analysis",
+      href: "/real-estate-analysis",
       icon: <SearchOutlined />,
       disabled: true,
     },
@@ -47,6 +50,10 @@ export default function SideNav() {
     icon: i.icon,
     disabled: i.disabled ? i.disabled : false,
   }));
-  
-  return <Menu items={items} defaultSelectedKeys={[itemProps[0].key]} />;
+
+  const selectedKey = itemProps
+    .filter((item) => pathname.startsWith(item.href.split("?")[0]))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.key;
+
+  return <Menu items={items} selectedKeys={[selectedKey]} />;
 }
