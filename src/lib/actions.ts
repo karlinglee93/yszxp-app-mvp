@@ -21,12 +21,17 @@ const TransactionFormSchema = z.object({
   currency_id: z.string().uuid(),
   description: z.string().optional(),
 });
+const UpdateTransactionFormSchema = z.object({
+  category_id: z.string().uuid(),
+  created_at: z.string(),
+  amount: z.coerce.number(),
+  currency_id: z.string().uuid(),
+  description: z.string().optional(),
+});
 
 export async function createTransaction(
   formData: FormattedTransactionFormType
 ) {
-  // INSERT INTO transactions (id, user_id, category_id, created_at, amount, ledger_id, currency_id, description)
-  // VALUES (uuid_generate_v4(), 'd85e6d01-b4da-4656-97fc-0dd9a3e96272', 'e80a9458-d27c-46a5-b454-9087543c381c', '2025-03-14', -88, 'e5a8ab9e-48f5-4a18-a6b5-4bf22f8bb601', 'b4ad8c8a-3f11-4da1-8ad2-af5debaf1b05', 'test')
   const {
     id,
     user_id,
@@ -55,6 +60,31 @@ export async function createTransaction(
     VALUES (${id}, ${user_id}, ${category_id}, ${created_at}, ${amount}, ${ledger_id}, ${currency_id}, ${description})
   `;
 
-  revalidatePath('/dashboard/transactions')
-  redirect('/dashboard/invoices');
+  revalidatePath("/dashboard/transactions");
+  redirect("/dashboard/transactions");
+}
+
+export async function updateTransaction(
+  formData: FormattedTransactionFormType,
+  id: string
+) {
+  const { category_id, created_at, amount, currency_id, description } =
+    UpdateTransactionFormSchema.parse({
+      category_id: formData.category,
+      created_at: formData.date,
+      amount:
+        formData.type === TransactionTypeType.EXPENSE
+          ? Math.abs(formData.amount) * -1
+          : Math.abs(formData.amount),
+      currency_id: formData.currency,
+      description: formData.note,
+    });
+  await sql`
+    UPDATE transactions
+    SET category_id = ${category_id}, amount = ${amount}, created_at = ${created_at}, currency_id=${currency_id}, description=${description}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath("/dashboard/transactions");
+  redirect("/dashboard/transactions");
 }

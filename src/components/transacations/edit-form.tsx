@@ -1,9 +1,10 @@
 "use client";
+import { updateTransaction } from "@/lib/actions";
 import {
   Categories,
   Currencies,
   currencySymbols,
-  Ledgers,
+  FormattedTransactionFormType,
   TransactionFormType,
   TransactionTypeType,
 } from "@/lib/definitions";
@@ -20,18 +21,25 @@ import {
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useState } from "react";
-import { createTransaction } from "@/lib/actions";
 
-export default function TransactionForm({
+export default function EditForm({
+  id,
+  transaction,
   currencies,
   categories,
-  ledgers,
 }: {
+  id: string;
+  transaction: FormattedTransactionFormType;
   currencies: Currencies[];
   categories: Categories[];
-  ledgers: Ledgers;
 }) {
-  const [type, setType] = useState(TransactionTypeType.EXPENSE);
+  const { category, date, currency, amount, note } = transaction;
+  const initialType =
+    Number(amount) < 0
+      ? TransactionTypeType.EXPENSE
+      : TransactionTypeType.INCOME;
+
+  const [type, setType] = useState(initialType);
   const [form] = useForm();
 
   const updatedCurrencies = currencies.map((currency) => ({
@@ -40,7 +48,7 @@ export default function TransactionForm({
   }));
   const selectBefore = (
     <Select
-      defaultValue={ledgers.currency_id}
+      defaultValue={currency}
       onChange={(e) => form.setFieldValue("currency", e)}
     >
       {updatedCurrencies.map((i) => (
@@ -57,7 +65,7 @@ export default function TransactionForm({
       ...values,
       date: values.date.format("YYYY-MM-DD"),
     };
-    createTransaction(formattedValues);
+    updateTransaction(formattedValues, id);
   };
 
   return (
@@ -69,10 +77,12 @@ export default function TransactionForm({
       layout="horizontal"
       style={{ maxWidth: 600 }}
       initialValues={{
-        type: TransactionTypeType.EXPENSE,
-        date: dayjs(),
-        amount: 0,
-        currency: ledgers.currency_id,
+        type: initialType,
+        category: category,
+        date: dayjs(date),
+        currency: currency,
+        amount: Math.abs(amount),
+        note: note,
       }}
     >
       <Form.Item label="Type" name="type">
@@ -111,6 +121,7 @@ export default function TransactionForm({
             placeholder="Enter transaction amount"
             addonBefore={selectBefore}
             min={0}
+            defaultValue={Math.abs(amount)}
           />
         </Flex>
       </Form.Item>

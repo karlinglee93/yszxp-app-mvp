@@ -4,6 +4,7 @@ import {
   Categories,
   Currencies,
   CurrencyRates,
+  FormattedTransactionFormType,
   Ledgers,
   TotalAmountByCategoryType,
   TotalAmountByDateType,
@@ -297,7 +298,7 @@ async function fetchFilteredTransactions(
   try {
     const filteredTransactions = await sql<TransactionType>`
       SELECT 
-        t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+        t.id, t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -345,6 +346,22 @@ async function fetchTransactionsCount(query: string, timeRange: string) {
   }
 }
 
+const fetchTransactionById = async (id: string) => {
+  try {
+    const transaction = await sql<FormattedTransactionFormType>`
+      SELECT 
+      t.created_at as date, t.category_id as category, t.amount as amount, t.currency_id as currency, t.description as note
+      FROM transactions t
+      WHERE t.id = ${id}
+      LIMIT 1`;
+
+    return transaction.rows[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch transaction data.");
+  }
+};
+
 export {
   fetchCurrencies,
   fetchCategories,
@@ -362,4 +379,5 @@ export {
   fetchIncomeTotalAmountByCategory,
   fetchFilteredTransactions,
   fetchTransactionsCount,
+  fetchTransactionById,
 };

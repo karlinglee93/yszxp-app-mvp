@@ -1,7 +1,7 @@
 "use client";
 import { Transaction } from "@/lib/definitions";
-import { DollarTwoTone } from "@ant-design/icons";
-import { Pagination, Table, TableProps, Tag } from "antd";
+import { DeleteOutlined, DollarTwoTone, EditOutlined } from "@ant-design/icons";
+import { Button, Pagination, Space, Table, TableProps, Tag } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const columns: TableProps["columns"] = [
@@ -42,6 +42,24 @@ const columns: TableProps["columns"] = [
     title: "Description",
     dataIndex: "description",
     key: "description",
+  },
+  {
+    title: "Action",
+    key: "action",
+    render: (_, record) => (
+      <Space size="middle">
+        <Button
+          type="link"
+          href={`/dashboard/transactions/${record.id}/edit`}
+          icon={<EditOutlined />}
+        />
+        <Button
+          type="link"
+          href={`/dashboard/transactions/${record.id}/delete`}
+          icon={<DeleteOutlined />}
+        />
+      </Space>
+    ),
   },
 ];
 

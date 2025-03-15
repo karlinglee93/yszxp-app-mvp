@@ -23,6 +23,7 @@ import { redirect } from "next/navigation";
 // TODO: fetch defauly currency for the ledger
 // TODO: handle 0 values, unit test
 // TODO: add logs for each function
+// TODO: add Breadcrumbs
 export default async function Page(props: {
   searchParams?: Promise<{
     date?: string;
