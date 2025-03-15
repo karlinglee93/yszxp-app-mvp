@@ -119,7 +119,9 @@ export default function TransactionForm({
       </Form.Item>
       <Form.Item label={null}>
         <Flex justify="end">
-          <Button type="default">Cannel</Button>
+          <Button type="default" href="/dashboard/transactions">
+            Canncel
+          </Button>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>

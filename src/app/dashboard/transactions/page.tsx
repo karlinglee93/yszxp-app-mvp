@@ -3,6 +3,7 @@ import TransactionSearch from "@/components/transacations/transaction-search";
 import TransactionTable from "@/components/transacations/transaction-table";
 import { Col, Flex, Row } from "antd";
 import dayjs from "dayjs";
+import { redirect } from "next/navigation";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -12,6 +13,10 @@ export default async function Page(props: {
   }>;
 }) {
   const searchParams = await props.searchParams;
+  if (!searchParams?.date) {
+    redirect(`/dashboard/transactions?date=${`${dayjs().format("YYYY-MM")}`}`);
+  }
+
   const query = searchParams?.query || "";
   const timeRange = searchParams?.date || `${dayjs().format("YYYY-MM")}`;
   const currentPage = Number(searchParams?.page) || 1;

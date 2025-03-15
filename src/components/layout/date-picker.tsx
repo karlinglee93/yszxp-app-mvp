@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 const { Option } = Select;
 
-export default function CustomDatePicker() {
+export default function CustomDatePicker({ hidden }: { hidden: boolean }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -41,7 +41,7 @@ export default function CustomDatePicker() {
   };
 
   return (
-    <Space>
+    <Space hidden={hidden}>
       <Select
         style={{ width: 100 }}
         aria-label="Picker Type"
