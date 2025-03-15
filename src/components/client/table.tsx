@@ -1,7 +1,16 @@
 "use client";
+import { deleteTransaction } from "@/lib/actions";
 import { Transaction } from "@/lib/definitions";
 import { DeleteOutlined, DollarTwoTone, EditOutlined } from "@ant-design/icons";
-import { Button, Pagination, Space, Table, TableProps, Tag } from "antd";
+import {
+  Button,
+  Pagination,
+  Popconfirm,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+} from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const columns: TableProps["columns"] = [
@@ -53,11 +62,15 @@ const columns: TableProps["columns"] = [
           href={`/dashboard/transactions/${record.id}/edit`}
           icon={<EditOutlined />}
         />
-        <Button
-          type="link"
-          href={`/dashboard/transactions/${record.id}/delete`}
-          icon={<DeleteOutlined />}
-        />
+        <Popconfirm
+          title="Delete the transaction"
+          description="Are you sure to delete this transaction?"
+          onConfirm={() => deleteTransaction(record.id)}
+          okText="Yes"
+          cancelText="Cancel"
+        >
+          <Button danger type="link" icon={<DeleteOutlined />} />
+        </Popconfirm>
       </Space>
     ),
   },

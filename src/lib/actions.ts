@@ -88,3 +88,9 @@ export async function updateTransaction(
   revalidatePath("/dashboard/transactions");
   redirect("/dashboard/transactions");
 }
+
+export async function deleteTransaction(id: string) {
+  await sql`DELETE FROM transactions WHERE id = ${id}`;
+
+  revalidatePath("/dashboard/transactions");
+}
