@@ -19,7 +19,7 @@ export default function ClientList({
           <List.Item.Meta
             avatar={
               <Avatar
-                src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
+                src={`https://api.dicebear.com/7.x/icons/svg?seed=${index}`}
               />
             }
             title={item.category_name}

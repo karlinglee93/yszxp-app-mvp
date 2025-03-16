@@ -3,6 +3,12 @@ import { Button } from "antd";
 
 export default function TransactionAddButton() {
   return (
-    <Button href="/dashboard/transactions/create" icon={<PlusOutlined />}>Create Transaction</Button>
+    <Button
+      type="primary"
+      href="/dashboard/transactions/create"
+      icon={<PlusOutlined />}
+    >
+      Create Transaction
+    </Button>
   );
 }
