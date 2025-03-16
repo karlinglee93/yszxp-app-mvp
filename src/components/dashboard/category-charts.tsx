@@ -7,11 +7,7 @@ import {
   TotalAmountByCategoryType,
   TransactionTypeType,
 } from "@/lib/definitions";
-import {
-  convertCurrency,
-  formatAmount,
-  formatPercentage,
-} from "@/lib/utils";
+import { convertCurrency, formatAmount, formatPercentage } from "@/lib/utils";
 import { Card, Flex } from "antd";
 import ClientProgress from "../client/progress";
 
@@ -44,23 +40,25 @@ export default async function CategoryCharts({
     const category = item.category;
     const amount =
       item.currency === defaultCurrency
-        ? formatAmount(item.total_amount)
+        ? item.total_amount
         : convertCurrency(
             formatAmount(item.total_amount),
             rates[item.currency]
           );
     if (acc[category]) {
-      acc[category].total_amount += Math.abs(amount);
+      acc[category].total_amount += Math.abs(formatAmount(amount));
     } else {
       acc[category] = {
         category: category,
-        total_amount: Math.abs(amount),
+        total_amount: Math.abs(formatAmount(amount)),
       };
     }
 
     return acc;
   }, {});
-  const results = Object.values(tempTotalAmountsByCategory).sort((a, b) => b.total_amount - a.total_amount);
+  const results = Object.values(tempTotalAmountsByCategory).sort(
+    (a, b) => b.total_amount - a.total_amount
+  );
   const maxAmount = Math.max(...results.map((item) => item.total_amount));
 
   if (!Array.isArray(results)) {
@@ -68,14 +66,33 @@ export default async function CategoryCharts({
     return;
   }
 
+  const topCategories = results.slice(0, 8);
+  const otherCategories = results.slice(8);
+  const otherTotal = otherCategories.reduce(
+    (sum, item) => sum + item.total_amount,
+    0
+  );
+  if (otherCategories.length > 0) {
+    topCategories.push({
+      category: "other expenses",
+      total_amount: otherTotal,
+    });
+  }
+
+  console.log(topCategories);
+
   return (
     <Card title={title}>
       <Flex>
         <div>
-          <ClientPieChart datasource={results} legend={false} height={222} />
+          <ClientPieChart
+            datasource={topCategories}
+            legend={false}
+            height={222}
+          />
         </div>
         <div>
-          {results.map((item) => (
+          {topCategories.map((item) => (
             <Flex key={item.category}>
               <label style={{ whiteSpace: "nowrap", width: "60%" }}>
                 {item.category}:&nbsp;
@@ -84,7 +101,7 @@ export default async function CategoryCharts({
                 key={item.category}
                 color={type === TransactionTypeType.EXPENSE ? "red" : "green"}
                 percent={formatPercentage(item.total_amount / maxAmount)}
-                format={item.total_amount}
+                format={formatAmount(item.total_amount)}
               />
             </Flex>
           ))}

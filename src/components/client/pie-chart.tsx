@@ -40,7 +40,7 @@ export default function ClientPieChart({
       },
     },
     tooltip: {
-      title: (amount: Amount) => `${amount.category} Expense: `,
+      title: (amount: Amount) => `Category ${amount.category}: `,
       field: "total",
     },
   };
