@@ -97,30 +97,13 @@ export default async function TransactionLineChart({
     results.reduce((acc, item) => acc + item.total_amount, 0) /
     numberOfPastDates;
 
-  const config = {
-    xField: "date",
-    yField: "total_amount",
-    point: {
-      shapeField: "circle",
-      sizeField: 4,
-    },
-    interaction: {
-      tooltip: {
-        marker: false,
-      },
-    },
-    style: {
-      lineWidth: 2,
-    },
-  };
-
   return (
     <Card title={title}>
       <label>
         {averageAmountText}
         {Math.abs(formatAmount(averageAmount))}
       </label>
-      <ClientLineChart datasource={completedData} config={config} />
+      <ClientLineChart datasource={completedData} isMonthQuery={isMonthQuery} />
     </Card>
   );
 }

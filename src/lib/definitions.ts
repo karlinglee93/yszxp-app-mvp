@@ -28,7 +28,7 @@ export enum PickerType {
 
 export type Transaction = {
   id: string;
-  created_at: object;
+  created_at: Date;
   amount: string;
   user_id: string;
   user_name: string;

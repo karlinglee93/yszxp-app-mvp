@@ -8,6 +8,7 @@ import dayjs, { Dayjs } from "dayjs";
 const { Option } = Select;
 
 export default function CustomDatePicker({ hidden }: { hidden: boolean }) {
+  // TODO: fix bug - onChange not call when changing from month to year
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

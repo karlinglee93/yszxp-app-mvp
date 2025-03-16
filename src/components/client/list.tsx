@@ -1,12 +1,13 @@
 "use client";
-import { Transaction } from "@/lib/definitions";
+import { TransactionType } from "@/lib/definitions";
 import { formatAmount } from "@/lib/utils";
 import { Avatar, List } from "antd";
+import dayjs from "dayjs";
 
 export default function ClientList({
   datasource,
 }: {
-  datasource: Partial<Transaction>[];
+  datasource: TransactionType[];
 }) {
   // TODO: fix bug - <li> cannot be a descendant of <li>
   return (
@@ -28,11 +29,11 @@ export default function ClientList({
           <List.Item key={`details-${index}`}>
             {item.currency_name}
             &nbsp;&nbsp;
-            {formatAmount(
-              parseFloat((item as Partial<Transaction>).amount as string)
-            )}
+            {formatAmount(parseFloat(item.amount as string))}
+          </List.Item>
+          <List.Item key={`date-${index}`}>
             &nbsp;&nbsp;
-            {(item.created_at as Date).toISOString()}
+            {dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}
           </List.Item>
         </List.Item>
       )}

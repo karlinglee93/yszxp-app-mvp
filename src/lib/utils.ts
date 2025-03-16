@@ -1,9 +1,11 @@
 import { TransactionType } from "./definitions";
 
 export const formatAmount = (amount: number | string) => {
-  if (typeof amount === "string")
-    return Math.round(parseFloat(amount) * 100) / 100;
-  return Math.round(amount * 100) / 100;
+  const parsedAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+
+  if (isNaN(parsedAmount)) return 0.0;
+
+  return parseFloat(parsedAmount.toFixed(2));
 };
 
 export const formatPercentage = (persentage: number) => {
@@ -58,9 +60,9 @@ export const generateFullDates = (timeRange: string) => {
 
     while (current <= end) {
       dates.push(new Date(current));
-      current.setDate(1);   
-      current.setMonth(current.getMonth() + 2)
-      current.setDate(0);  
+      current.setDate(1);
+      current.setMonth(current.getMonth() + 2);
+      current.setDate(0);
     }
   } else {
     throw new Error(`Incorrect time range format: ${timeRange}`);

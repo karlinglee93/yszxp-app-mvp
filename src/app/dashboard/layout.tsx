@@ -13,15 +13,42 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Layout>
-      <Sider>
+      <Sider
+        width={200}
+        style={{
+          position: "fixed",
+          left: 0,
+          top: 0,
+          height: "100vh",
+          zIndex: 1000,
+        }}
+      >
         <SideNav />
       </Sider>
-      <Layout>
-        <Header>
+      <Layout style={{ marginLeft: 200 }}>
+        <Header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            background: "#fff",
+          }}
+        >
           {/* TODO: enhance to display the oldest data if the timerange is too long */}
           <DatePicker hidden={!datePickerExistPathnames.includes(pathname)} />
         </Header>
-        <Content>{children}</Content>
+        <Content
+          style={{
+            padding: "24px",
+            minHeight: "100vh",
+            background: "#f0f2f5",
+          }}
+        >
+          {children}
+        </Content>
         <Footer>Footer</Footer>
       </Layout>
     </Layout>
