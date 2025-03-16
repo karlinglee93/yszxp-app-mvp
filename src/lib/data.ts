@@ -290,6 +290,7 @@ async function fetchIncomeTotalAmountByCategory(timeRange: string) {
 const ITEMS_PER_PAGE = 10;
 async function fetchFilteredTransactions(
   query: string,
+  category: string,
   timeRange: string,
   currentPage: number
 ): Promise<TransactionType[]> {
@@ -305,7 +306,8 @@ async function fetchFilteredTransactions(
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
       WHERE 
-        t.created_at::TEXT LIKE ${`${timeRange}%`} AND (
+        t.created_at::TEXT LIKE ${`${timeRange}%`} AND 
+        cat.category_name ILIKE ${`%${category}%`} AND (
           t.created_at::TEXT ILIKE ${`%${query}%`} OR
           cat.category_name ILIKE ${`%${query}%`} OR
           t.amount::TEXT ILIKE ${`%${query}%`} OR
@@ -322,7 +324,11 @@ async function fetchFilteredTransactions(
   }
 }
 
-async function fetchTransactionsCount(query: string, timeRange: string) {
+async function fetchTransactionsCount(
+  query: string,
+  category: string,
+  timeRange: string
+) {
   try {
     const count = await sql`SELECT COUNT(*)
       FROM transactions t
@@ -331,7 +337,8 @@ async function fetchTransactionsCount(query: string, timeRange: string) {
       JOIN categories cat ON t.category_id = cat.category_id
       JOIN ledgers l ON t.ledger_id = l.ledger_id
       WHERE 
-        t.created_at::TEXT LIKE ${`${timeRange}%`} AND (
+        t.created_at::TEXT LIKE ${`${timeRange}%`} AND
+        cat.category_name ILIKE ${`%${category}%`} AND (
           t.created_at::TEXT ILIKE ${`%${query}%`} OR
           cat.category_name ILIKE ${`%${query}%`} OR
           t.amount::TEXT ILIKE ${`%${query}%`} OR

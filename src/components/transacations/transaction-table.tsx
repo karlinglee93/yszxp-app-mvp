@@ -5,13 +5,20 @@ export default async function TransactionTable({
   query,
   page,
   timeRange,
+  category,
 }: {
   query: string;
   page: number;
   timeRange: string;
+  category: string;
 }) {
-  const filteredTransactions = await fetchFilteredTransactions(query, timeRange, page);
-  const totalCount = await fetchTransactionsCount(query, timeRange);
+  const filteredTransactions = await fetchFilteredTransactions(
+    query,
+    category,
+    timeRange,
+    page
+  );
+  const totalCount = await fetchTransactionsCount(query, category, timeRange);
 
   if (!Array.isArray(filteredTransactions)) {
     console.error(

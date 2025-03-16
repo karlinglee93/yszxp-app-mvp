@@ -59,7 +59,7 @@ export default function CustomDatePicker({ hidden }: { hidden: boolean }) {
         <DatePicker
           picker={type}
           onChange={handleChange}
-          defaultValue={dayjs(searchParams.get("date"))}
+          defaultValue={dayjs(searchParams.get("date")?.toString())}
           needConfirm
           open={open}
           onOk={() => setOpen(false)}

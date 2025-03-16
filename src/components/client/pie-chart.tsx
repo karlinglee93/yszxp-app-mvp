@@ -1,7 +1,10 @@
 "use client";
 import { Amount } from "@/lib/definitions";
 import { formatAmount, formatPercentage } from "@/lib/utils";
-import { Pie } from "@ant-design/charts";
+import { Chart, Pie, PlotEvent } from "@ant-design/charts";
+import { message } from "antd";
+import dayjs from "dayjs";
+import { redirect } from "next/navigation";
 
 export default function ClientPieChart({
   datasource,
@@ -12,7 +15,33 @@ export default function ClientPieChart({
   legend: boolean;
   height: number;
 }) {
-  const formatedData = datasource.map((item) => ({
+  const [messageApi, contextHolder] = message.useMessage();
+  const info = (message: string) => {
+    messageApi.info(message);
+  };
+
+  const topCategories = datasource.slice(0, 8);
+  const otherCategories = datasource.slice(8);
+  const formattedOtherCategories = otherCategories.reduce<{
+    categories: string[];
+    total_amount: number;
+  }>(
+    (acc, item) => {
+      acc.total_amount += item.total_amount;
+      acc.categories.push(item.category);
+      return acc;
+    },
+    { categories: [], total_amount: 0 }
+  );
+
+  if (otherCategories.length > 0) {
+    topCategories.push({
+      category: "other_categories",
+      total_amount: formattedOtherCategories.total_amount,
+    });
+  }
+
+  const formatedData = topCategories.map((item) => ({
     category: item.category,
     total_amount: Math.abs(formatAmount(item.total_amount)),
   }));
@@ -20,6 +49,24 @@ export default function ClientPieChart({
     (acc, item) => acc + formatAmount(item.total_amount),
     0
   );
+
+  const handlePieChartClick = async (ev: PlotEvent) => {
+    const { category } = ev.data.data;
+    if (category === "other_categories") {
+      const message = `Other categories: ${formattedOtherCategories.categories.join(
+        ", "
+      )}`;
+      info(message);
+      return;
+    }
+
+    const curDate =
+      new URLSearchParams(window.location.search).get("date") ||
+      dayjs().format("YYYY-MM");
+
+    redirect(`/dashboard/transactions?date=${curDate}&category=${category}`);
+  };
+
   const config = {
     angleField: "total_amount",
     colorField: "category",
@@ -40,12 +87,33 @@ export default function ClientPieChart({
       },
     },
     tooltip: {
-      title: (amount: Amount) => `Category ${amount.category}: `,
-      field: "total",
+      title: (amount: Amount) => `${amount.category}: `,
+      items: [
+        {
+          field: "total_amount",
+          name: "Percentage",
+          valueFormatter: (amount: number) =>
+            `${formatPercentage(formatAmount(amount) / totalExpense)}%`,
+        },
+        {
+          field: "total_amount",
+          name: "Total amount",
+          valueFormatter: (amount: number) => amount,
+        },
+      ],
+    },
+    onReady: ({ chart }: { chart: Chart }) => {
+      chart.on("interval:pointerover", (evt: PlotEvent) => {
+        evt.target.style.cursor = "pointer";
+      });
+      chart.on(`interval:click`, handlePieChartClick);
     },
   };
 
   return (
-    <Pie data={formatedData} {...config} legend={legend} height={height} />
+    <div>
+      {contextHolder}
+      <Pie data={formatedData} {...config} legend={legend} height={height} />
+    </div>
   );
 }

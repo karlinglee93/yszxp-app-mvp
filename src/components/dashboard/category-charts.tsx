@@ -64,22 +64,9 @@ export default async function CategoryCharts({
     return;
   }
 
-  const topCategories = results.slice(0, 8);
-  const otherCategories = results.slice(8);
-  const otherTotal = otherCategories.reduce(
-    (sum, item) => sum + item.total_amount,
-    0
-  );
-  if (otherCategories.length > 0) {
-    topCategories.push({
-      category: "Other expenses",
-      total_amount: otherTotal,
-    });
-  }
-
   return (
     <Card title={title}>
-      <ClientPieChart datasource={topCategories} legend={false} height={222} />
+      <ClientPieChart datasource={results} legend={false} height={222} />
     </Card>
   );
 }

@@ -10,6 +10,7 @@ export default async function Page(props: {
     query?: string;
     date?: string;
     page?: string;
+    category?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
@@ -19,6 +20,7 @@ export default async function Page(props: {
 
   const query = searchParams?.query || "";
   const timeRange = searchParams?.date || `${dayjs().format("YYYY-MM")}`;
+  const category = searchParams?.category || "";
   const currentPage = Number(searchParams?.page) || 1;
 
   return (
@@ -37,6 +39,7 @@ export default async function Page(props: {
             query={query}
             timeRange={timeRange}
             page={currentPage}
+            category={category}
           />
         </Col>
       </Row>
