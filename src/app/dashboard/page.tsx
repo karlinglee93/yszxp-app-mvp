@@ -55,9 +55,7 @@ export default async function Page(props: {
             />
           </Suspense>
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
+        <Col span={12}>
           <Suspense fallback={<PieChartSkeleton />}>
             <CategoryCharts
               title="Spending Category Overview"
@@ -107,9 +105,7 @@ export default async function Page(props: {
             />
           </Suspense>
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
+        <Col span={12}>
           <Suspense fallback={<PieChartSkeleton />}>
             <CategoryCharts
               title="Earning Category Overview"

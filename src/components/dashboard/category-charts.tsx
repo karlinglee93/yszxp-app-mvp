@@ -7,9 +7,8 @@ import {
   TotalAmountByCategoryType,
   TransactionTypeType,
 } from "@/lib/definitions";
-import { convertCurrency, formatAmount, formatPercentage } from "@/lib/utils";
-import { Card, Flex } from "antd";
-import ClientProgress from "../client/progress";
+import { convertCurrency, formatAmount } from "@/lib/utils";
+import { Card } from "antd";
 
 export default async function CategoryCharts({
   title,
@@ -59,7 +58,6 @@ export default async function CategoryCharts({
   const results = Object.values(tempTotalAmountsByCategory).sort(
     (a, b) => b.total_amount - a.total_amount
   );
-  const maxAmount = Math.max(...results.map((item) => item.total_amount));
 
   if (!Array.isArray(results)) {
     console.error("Error fetching transactions:", results);
@@ -74,39 +72,14 @@ export default async function CategoryCharts({
   );
   if (otherCategories.length > 0) {
     topCategories.push({
-      category: "other expenses",
+      category: "Other expenses",
       total_amount: otherTotal,
     });
   }
 
-  console.log(topCategories);
-
   return (
     <Card title={title}>
-      <Flex>
-        <div>
-          <ClientPieChart
-            datasource={topCategories}
-            legend={false}
-            height={222}
-          />
-        </div>
-        <div>
-          {topCategories.map((item) => (
-            <Flex key={item.category}>
-              <label style={{ whiteSpace: "nowrap", width: "60%" }}>
-                {item.category}:&nbsp;
-              </label>
-              <ClientProgress
-                key={item.category}
-                color={type === TransactionTypeType.EXPENSE ? "red" : "green"}
-                percent={formatPercentage(item.total_amount / maxAmount)}
-                format={formatAmount(item.total_amount)}
-              />
-            </Flex>
-          ))}
-        </div>
-      </Flex>
+      <ClientPieChart datasource={topCategories} legend={false} height={222} />
     </Card>
   );
 }
