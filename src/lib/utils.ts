@@ -44,8 +44,8 @@ export const generateFullDates = (timeRange: string) => {
   if (isMonthQuery) {
     const year = Number(dateArr[0]);
     const month = Number(dateArr[1]);
-    start = new Date(year, month - 1, 1);
-    end = new Date(year, month, 0);
+    start = new Date(Date.UTC(year, month - 1, 1));
+    end = new Date(Date.UTC(year, month, 0));
     current = start;
 
     while (current <= end) {
@@ -54,8 +54,8 @@ export const generateFullDates = (timeRange: string) => {
     }
   } else if (!isMonthQuery) {
     const year = Number(dateArr[0]);
-    start = new Date(year, 0, 1);
-    end = new Date(year, 11, 31);
+    start = new Date(Date.UTC(year, 0, 1));
+    end = new Date(Date.UTC(year, 11, 31));
     current = start;
 
     while (current <= end) {

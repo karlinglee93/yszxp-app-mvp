@@ -13,20 +13,24 @@ import dayjs from "dayjs";
 export default function SideNav() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const queryString = searchParams.get("date")
-    ? `?date=${searchParams.get("date")}`
-    : `?date=${dayjs().format("YYYY-MM")}`;
+  const rawDate = searchParams.get("date");
+  const isFullDateFormat = (date: string | null) => {
+    return date && dayjs(date, "YYYY-MM-DD", true).isValid();
+  };
+  const formattedDate = isFullDateFormat(rawDate)
+    ? dayjs(rawDate).format("YYYY-MM")
+    : rawDate || dayjs().format("YYYY-MM");
   const itemProps = [
     {
       key: "dashboard",
       label: "Dashboard",
-      href: `/dashboard${queryString}`,
+      href: `/dashboard?date=${formattedDate}`,
       icon: <LineChartOutlined />,
     },
     {
       key: "transactions",
       label: "Transactions",
-      href: `/dashboard/transactions${queryString}`,
+      href: `/dashboard/transactions?date=${formattedDate}`,
       icon: <TransactionOutlined />,
     },
     {

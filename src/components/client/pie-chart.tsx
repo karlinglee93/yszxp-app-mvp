@@ -50,7 +50,7 @@ export default function ClientPieChart({
     0
   );
 
-  const handlePieChartClick = async (ev: PlotEvent) => {
+  const handleChartClick = async (ev: PlotEvent) => {
     const { category } = ev.data.data;
     if (category === "other_categories") {
       const message = `Other categories: ${formattedOtherCategories.categories.join(
@@ -106,7 +106,7 @@ export default function ClientPieChart({
       chart.on("interval:pointerover", (evt: PlotEvent) => {
         evt.target.style.cursor = "pointer";
       });
-      chart.on(`interval:click`, handlePieChartClick);
+      chart.on(`interval:click`, handleChartClick);
     },
   };
 
