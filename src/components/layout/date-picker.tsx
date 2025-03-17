@@ -13,7 +13,7 @@ export default function CustomDatePicker({ hidden }: { hidden: boolean }) {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const [type, setType] = useState<PickerType>(() =>
+  const [type, setType] = useState<PickerType>(
     searchParams.get("date")?.split("-").length === 2
       ? PickerType.MONTH
       : PickerType.YEAR

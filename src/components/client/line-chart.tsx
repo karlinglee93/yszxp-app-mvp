@@ -3,6 +3,16 @@ import { formatAmount, formatDate } from "@/lib/utils";
 import { Chart, Line, PlotEvent } from "@ant-design/charts";
 import dayjs from "dayjs";
 import { redirect } from "next/navigation";
+import { useEffect, useRef } from "react";
+
+const handleChartClick = async (ev: PlotEvent, isMonthQuery: boolean) => {
+  const dateStr = ev.data?.data?.date;
+  const formattedDate = isMonthQuery
+    ? formatDate(dateStr)
+    : dayjs(dateStr).format("YYYY-MM");
+
+  redirect(`/dashboard/transactions?date=${formattedDate}`);
+};
 
 export default function ClientLineChart({
   datasource,
@@ -11,14 +21,10 @@ export default function ClientLineChart({
   datasource: { date: Date; total_amount: number }[];
   isMonthQuery: boolean;
 }) {
-  const handleChartClick = async (ev: PlotEvent) => {
-    const dateStr = ev.data.data.date;
-    const formattedDate = isMonthQuery
-      ? formatDate(dateStr)
-      : dayjs(dateStr).format("YYYY-MM");
-
-    redirect(`/dashboard/transactions?date=${formattedDate}`);
-  };
+  const isMonthQueryRef = useRef(isMonthQuery);
+  useEffect(() => {
+    isMonthQueryRef.current = isMonthQuery;
+  }, [isMonthQuery]);
 
   const config = {
     xField: "date",
@@ -58,10 +64,11 @@ export default function ClientLineChart({
       chart.on("element:pointerover", (evt: PlotEvent) => {
         evt.target.style.cursor = "pointer";
       });
-      chart.on(`element:click`, handleChartClick);
+      chart.on(`element:click`, (ev: PlotEvent) =>
+        handleChartClick(ev, isMonthQueryRef.current)
+      );
     },
   };
-  console.log(datasource)
 
   return <Line height={200} data={datasource} {...config} />;
 }
