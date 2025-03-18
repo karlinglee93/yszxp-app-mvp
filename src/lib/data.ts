@@ -291,7 +291,7 @@ async function fetchExpenseTotalAmountByCategory(timeRange: string) {
   try {
     const expenseAmountsByCategory = await sql<TotalAmountByCategoryType>`
       SELECT 
-        cat.category_name as category, cur.currency_name as currency, sum(t.amount) as total_amount
+        cat.category_name as category, cur.currency_name as currency, sum(t.amount) as total_amount, COUNT(*) as total_count
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -313,7 +313,7 @@ async function fetchIncomeTotalAmountByCategory(timeRange: string) {
   try {
     const expenseAmountsByCategory = await sql<TotalAmountByCategoryType>`
       SELECT 
-        cat.category_name as category, cur.currency_name as currency, sum(t.amount) as total_amount
+        cat.category_name as category, cur.currency_name as currency, sum(t.amount) as total_amount, COUNT(*) as total_count
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id

@@ -34,7 +34,10 @@ export default async function CategoryCharts({
   }
 
   const tempTotalAmountsByCategory = totalAmountsByCategory.reduce<
-    Record<string, { category: string; total_amount: number }>
+    Record<
+      string,
+      { category: string; total_amount: number; total_count: number }
+    >
   >((acc, item) => {
     const category = item.category;
     const amount =
@@ -46,10 +49,12 @@ export default async function CategoryCharts({
           );
     if (acc[category]) {
       acc[category].total_amount += Math.abs(formatAmount(amount));
+      acc[category].total_count += Number(item.total_count);
     } else {
       acc[category] = {
         category: category,
         total_amount: Math.abs(formatAmount(amount)),
+        total_count: Number(item.total_count),
       };
     }
 
@@ -66,7 +71,7 @@ export default async function CategoryCharts({
 
   return (
     <Card title={title}>
-      <ClientPieChart datasource={results} legend={false} height={222} />
+      <ClientPieChart datasource={results} legend={false} />
     </Card>
   );
 }

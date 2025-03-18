@@ -26,8 +26,6 @@ export default function ClientLineChart({
     isMonthQueryRef.current = isMonthQuery;
   }, [isMonthQuery]);
 
-  console.log(datasource);
-
   const config = {
     xField: "date",
     yField: "total_amount",

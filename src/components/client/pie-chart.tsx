@@ -9,11 +9,9 @@ import { redirect } from "next/navigation";
 export default function ClientPieChart({
   datasource,
   legend,
-  height,
 }: {
-  datasource: { category: string; total_amount: number }[];
+  datasource: { category: string; total_amount: number; total_count: number }[];
   legend: boolean;
-  height: number;
 }) {
   const [messageApi, contextHolder] = message.useMessage();
   const info = (message: string) => {
@@ -25,25 +23,29 @@ export default function ClientPieChart({
   const formattedOtherCategories = otherCategories.reduce<{
     categories: string[];
     total_amount: number;
+    total_count: number;
   }>(
     (acc, item) => {
       acc.total_amount += item.total_amount;
       acc.categories.push(item.category);
+      acc.total_count += item.total_count;
       return acc;
     },
-    { categories: [], total_amount: 0 }
+    { categories: [], total_amount: 0, total_count: 0 }
   );
 
   if (otherCategories.length > 0) {
     topCategories.push({
       category: "other_categories",
       total_amount: formattedOtherCategories.total_amount,
+      total_count: formattedOtherCategories.total_count,
     });
   }
 
   const formatedData = topCategories.map((item) => ({
     category: item.category,
     total_amount: Math.abs(formatAmount(item.total_amount)),
+    total_count: item.total_count,
   }));
   const totalExpense = formatedData.reduce(
     (acc, item) => acc + formatAmount(item.total_amount),
@@ -98,7 +100,12 @@ export default function ClientPieChart({
         {
           field: "total_amount",
           name: "Total amount",
-          valueFormatter: (amount: number) => amount,
+          valueFormatter: (value: number) => value,
+        },
+        {
+          field: "total_count",
+          name: "Count of transactions",
+          valueFormatter: (value: number) => value,
         },
       ],
     },
@@ -113,7 +120,7 @@ export default function ClientPieChart({
   return (
     <div>
       {contextHolder}
-      <Pie data={formatedData} {...config} legend={legend} height={height} />
+      <Pie data={formatedData} {...config} legend={legend} height={244} />
     </div>
   );
 }
