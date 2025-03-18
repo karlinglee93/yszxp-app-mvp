@@ -182,7 +182,7 @@ async function fetchExpenseTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
-        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount
+        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount, COUNT(*) as total_count
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -204,7 +204,7 @@ async function fetchIncomeTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
-        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount
+        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount, COUNT(*) as total_count
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -226,7 +226,7 @@ async function fetchTotalAmountByDate(timeRange: string) {
   try {
     const expenseAmountsByDate = await sql<TotalAmountByDateType>`
       SELECT 
-        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount
+        DATE(t.created_at) as date, cur.currency_name as currency, sum(t.amount) as total_amount, COUNT(*) as total_count
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -237,6 +237,50 @@ async function fetchTotalAmountByDate(timeRange: string) {
       ORDER BY date ASC`;
 
     return expenseAmountsByDate.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch expense transaction data by date.");
+  }
+}
+
+async function fetchExpenseTransactionCount(timeRange: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM transactions t
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
+        AND t.amount < 0`;
+
+    return count.rows[0].count;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch expense transaction data by date.");
+  }
+}
+
+async function fetchIncomeTransactionCount(timeRange: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM transactions t
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}
+        AND t.amount > 0`;
+
+    return count.rows[0].count;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch expense transaction data by date.");
+  }
+}
+
+async function fetchTotalTransactionCount(timeRange: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM transactions t
+      WHERE t.created_at::TEXT LIKE ${`${timeRange}%`}`;
+
+    return count.rows[0].count;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch expense transaction data by date.");
@@ -382,6 +426,9 @@ export {
   fetchExpenseTotalAmountByDate,
   fetchIncomeTotalAmountByDate,
   fetchTotalAmountByDate,
+  fetchExpenseTransactionCount,
+  fetchIncomeTransactionCount,
+  fetchTotalTransactionCount,
   fetchExpenseTotalAmountByCategory,
   fetchIncomeTotalAmountByCategory,
   fetchFilteredTransactions,

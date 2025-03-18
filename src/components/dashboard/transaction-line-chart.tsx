@@ -1,7 +1,10 @@
 import {
   fetchExpenseTotalAmountByDate,
+  fetchExpenseTransactionCount,
   fetchIncomeTotalAmountByDate,
+  fetchIncomeTransactionCount,
   fetchTotalAmountByDate,
+  fetchTotalTransactionCount,
 } from "@/lib/data";
 import ClientLineChart from "@/components/client/line-chart";
 import {
@@ -13,7 +16,7 @@ import {
   getDateType,
   getNumberOfPastDates,
 } from "@/lib/utils";
-import { Card } from "antd";
+import { Card, Flex } from "antd";
 import { TotalAmountByDateType, TransactionTypeType } from "@/lib/definitions";
 
 export default async function TransactionLineChart({
@@ -33,17 +36,21 @@ export default async function TransactionLineChart({
   // TODO: fix x, y axis display date issue
   const { isMonthQuery } = getDateType(timeRange);
   let totalAmountsByDate: TotalAmountByDateType[] = [];
+  let totalCounts: string = "";
   if (type === TransactionTypeType.EXPENSE) {
     totalAmountsByDate = await fetchExpenseTotalAmountByDate(timeRange);
+    totalCounts = await fetchExpenseTransactionCount(timeRange);
   } else if (type === TransactionTypeType.INCOME) {
     totalAmountsByDate = await fetchIncomeTotalAmountByDate(timeRange);
+    totalCounts = await fetchIncomeTransactionCount(timeRange);
   } else if (type === TransactionTypeType.ALL) {
     totalAmountsByDate = await fetchTotalAmountByDate(timeRange);
+    totalCounts = await fetchTotalTransactionCount(timeRange);
   } else {
     throw Error(`No such transaction type: ${type}`);
   }
   const tempTotalAmountsByDate = totalAmountsByDate.reduce<
-    Record<string, { date: string; total_amount: number }>
+    Record<string, { date: string; total_amount: number; total_count: number }>
   >((acc, item) => {
     const date = isMonthQuery
       ? formatDate(item.date)
@@ -57,10 +64,12 @@ export default async function TransactionLineChart({
           );
     if (acc[date]) {
       acc[date].total_amount += amount;
+      acc[date].total_count += Number(item.total_count);
     } else {
       acc[date] = {
         date: date,
         total_amount: amount,
+        total_count: Number(item.total_count),
       };
     }
 
@@ -83,26 +92,29 @@ export default async function TransactionLineChart({
     return {
       date: date,
       total_amount: Math.abs(formatAmount(found ? found.total_amount : 0)),
+      total_count: found ? found.total_count : 0,
     };
   });
+
+  const numberOfPastDates = getNumberOfPastDates(timeRange);
+  const averageAmount =
+    results.reduce((acc, item) => acc + item.total_amount, 0) /
+    numberOfPastDates;
   const averageAmountText = `Average ${isMonthQuery ? "Daily" : "Monthly"} ${
     type === TransactionTypeType.EXPENSE
       ? "Spending"
       : type === TransactionTypeType.INCOME
       ? "Earning"
       : "Banlance"
-  } this ${isMonthQuery ? "Month" : "Year"}: `;
-  const numberOfPastDates = getNumberOfPastDates(timeRange);
-  const averageAmount =
-    results.reduce((acc, item) => acc + item.total_amount, 0) /
-    numberOfPastDates;
+  }: ${Math.abs(formatAmount(averageAmount))}`;
+  const countText = `Number of transactions: ${totalCounts}`;
 
   return (
     <Card title={title}>
-      <label>
-        {averageAmountText}
-        {Math.abs(formatAmount(averageAmount))}
-      </label>
+      <Flex vertical>
+        <label>{averageAmountText}</label>
+        <label>{countText}</label>
+      </Flex>
       <ClientLineChart datasource={completedData} isMonthQuery={isMonthQuery} />
     </Card>
   );

@@ -18,13 +18,15 @@ export default function ClientLineChart({
   datasource,
   isMonthQuery,
 }: {
-  datasource: { date: Date; total_amount: number }[];
+  datasource: { date: Date; total_amount: number; total_count: number }[];
   isMonthQuery: boolean;
 }) {
   const isMonthQueryRef = useRef(isMonthQuery);
   useEffect(() => {
     isMonthQueryRef.current = isMonthQuery;
   }, [isMonthQuery]);
+
+  console.log(datasource);
 
   const config = {
     xField: "date",
@@ -57,6 +59,11 @@ export default function ClientLineChart({
           name: "Total amount",
           valueFormatter: (d: number) =>
             d > 0 ? formatAmount(d) : "No Transactions",
+        },
+        {
+          field: "total_count",
+          name: "Count of transactions",
+          valueFormatter: (d: number) => d,
         },
       ],
     },

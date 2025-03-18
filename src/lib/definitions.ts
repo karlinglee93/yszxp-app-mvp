@@ -54,6 +54,7 @@ export type TotalAmountByDateType = {
   date: Date;
   total_amount: string;
   currency: string;
+  total_count: string
 };
 
 export type TotalAmountByCategoryType = {
