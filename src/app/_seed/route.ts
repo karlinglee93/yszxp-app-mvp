@@ -6,6 +6,7 @@ import {
   currencies,
   categories,
   transactions,
+  recurringTransactions,
 } from "@/lib/placeholder-data";
 
 const client = await db.connect();
@@ -124,11 +125,45 @@ async function seedTransactions() {
 }
 
 async function seedRelationships() {
+  await client.sql`ALTER TABLE "recurring_transactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");`;
+  await client.sql`ALTER TABLE "recurring_transactions" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("category_id");`;
+  await client.sql`ALTER TABLE "recurring_transactions" ADD FOREIGN KEY ("ledger_id") REFERENCES "ledgers" ("ledger_id");`;
+  await client.sql`ALTER TABLE "recurring_transactions" ADD FOREIGN KEY ("currency_id") REFERENCES "currencies" ("currency_id");`;
   await client.sql`ALTER TABLE "transactions" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("category_id")`;
   await client.sql`ALTER TABLE "transactions" ADD FOREIGN KEY ("ledger_id") REFERENCES "ledgers" ("ledger_id")`;
   await client.sql`ALTER TABLE "transactions" ADD FOREIGN KEY ("currency_id") REFERENCES "currencies" ("currency_id")`;
   await client.sql`ALTER TABLE "transactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")`;
   await client.sql`ALTER TABLE "ledgers" ADD FOREIGN KEY ("currency_id") REFERENCES "currencies" ("currency_id")`;
+}
+
+async function seedRecurringTransactions() {
+  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  await client.sql`CREATE TABLE IF NOT EXISTS "recurring_transactions" (
+    "id" uuid UNIQUE PRIMARY KEY NOT NULL,
+    "user_id" uuid NOT NULL,
+    "category_id" uuid NOT NULL,
+    "created_at" timestamp DEFAULT (now()),
+    "amount" decimal(10,2) NOT NULL,
+    "ledger_id" uuid NOT NULL,
+    "currency_id" uuid NOT NULL,
+    "description" varchar(255),
+    "frequency" varchar(10) NOT NULL,
+    "next_transaction_date" timestamp NOT NULL,
+    "end_date" timestamp,
+    "status" varchar(10) NOT NULL DEFAULT 'ACTIVE'
+  )`;
+
+  const insertedRecurringTransactions = await Promise.all(
+    recurringTransactions.map(
+      (transaction) => client.sql`
+        INSERT INTO recurring_transactions (id, user_id, category_id, created_at, amount, ledger_id, currency_id, description, frequency, next_transaction_date, end_date, status)
+        VALUES (${transaction.id}, ${transaction.user_id}, ${transaction.category_id}, ${transaction.created_at}, ${transaction.amount}, ${transaction.ledger_id}, ${transaction.currency_id}, ${transaction.description}, ${transaction.frequency}, ${transaction.next_transaction_date}, ${transaction.end_date}, ${transaction.status})
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
+
+  return insertedRecurringTransactions;
 }
 
 export async function GET() {
@@ -140,6 +175,7 @@ export async function GET() {
     await seedCategories();
     await seedTransactions();
     await seedRelationships();
+    await seedRecurringTransactions();
     await client.sql`COMMIT`;
 
     return Response.json({ message: "Database seeded successfully" });

@@ -26,6 +26,18 @@ export enum PickerType {
   FROM_START = "from_start",
 }
 
+export enum RecurringTransactionType {
+  DAILY = "daily",
+  WEEKLY = "weekly",
+  MONTHLY = "monthly",
+  YEARLY = "yearly",
+}
+
+export enum RecurringTransactionStatusType {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
 export type Transaction = {
   id: string;
   created_at: Date;

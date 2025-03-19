@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { rawTransactions } from "./raw-transaction-data";
+import {
+  RecurringTransactionStatusType,
+  RecurringTransactionType,
+} from "./definitions";
 
 // TODO: secret user pwd
 const users = [
@@ -184,4 +188,108 @@ const transactions = rawTransactions.map((transaction) => ({
   description: transaction["备注"],
 }));
 
-export { users, ledgers, currencies, categories, transactions };
+const calculateNextRecurringDate = (
+  created_at: string,
+  frequency: RecurringTransactionType
+) => {
+  const today = new Date();
+  const curDate = new Date(created_at);
+
+  while (curDate <= today) {
+    switch (frequency) {
+      case RecurringTransactionType.DAILY:
+        curDate.setDate(curDate.getDate() + 1);
+        break;
+      case RecurringTransactionType.WEEKLY:
+        curDate.setDate(curDate.getDate() + 7);
+        break;
+      case RecurringTransactionType.MONTHLY:
+        curDate.setMonth(curDate.getMonth() + 1);
+        break;
+      case RecurringTransactionType.YEARLY:
+        curDate.setFullYear(curDate.getFullYear() + 1);
+        break;
+      default:
+        throw new Error("Invalid frequency type");
+    }
+  }
+
+  return curDate.toISOString();
+};
+
+const rawRecurringTransactions = [
+  {
+    category_name_cn: "订阅",
+    amount: -11,
+    currency_name_cn: "人民币",
+    description: "apple music",
+    frequency: RecurringTransactionType.MONTHLY,
+    end_date: null,
+    status: RecurringTransactionStatusType.ACTIVE,
+    created_at: "2025-01-01",
+  },
+  {
+    category_name_cn: "订阅",
+    amount: -68,
+    currency_name_cn: "人民币",
+    description: "icloud",
+    frequency: RecurringTransactionType.MONTHLY,
+    end_date: null,
+    status: RecurringTransactionStatusType.ACTIVE,
+    created_at: "2025-01-01",
+  },
+  {
+    category_name_cn: "通讯",
+    amount: -10.99,
+    currency_name_cn: "欧元",
+    description: "月通信费",
+    frequency: RecurringTransactionType.MONTHLY,
+    end_date: null,
+    status: RecurringTransactionStatusType.ACTIVE,
+    created_at: "2025-01-01",
+  },
+  {
+    category_name_cn: "订阅",
+    amount: -23.56,
+    currency_name_cn: "欧元",
+    description: "ChatGPT",
+    frequency: RecurringTransactionType.MONTHLY,
+    end_date: null,
+    status: RecurringTransactionStatusType.ACTIVE,
+    created_at: "2025-01-12",
+  },
+];
+
+const recurringTransactions = rawRecurringTransactions.map((i) => {
+  return {
+    id: uuidv4(),
+    user_id: users.find((user) => user.user_name === "admin")?.user_id,
+    ledger_id: ledgers.find((ledger) => ledger.ledger_name === "default")
+      ?.ledger_id,
+    category_id: categories.find(
+      (c) => c.category_name_cn === i.category_name_cn
+    )?.category_id,
+    currency_id: currencies.find(
+      (c) => c.currency_name_cn === i.currency_name_cn
+    )?.currency_id,
+    amount: i.amount,
+    description: i.description,
+    frequency: i.frequency,
+    created_at: i.created_at,
+    next_transaction_date: calculateNextRecurringDate(
+      i.created_at,
+      i.frequency
+    ),
+    end_date: null,
+    status: i.status,
+  };
+});
+
+export {
+  users,
+  ledgers,
+  currencies,
+  categories,
+  transactions,
+  recurringTransactions,
+};
