@@ -38,6 +38,17 @@ export enum RecurringTransactionStatusType {
   INACTIVE = "inactive",
 }
 
+export type RecurringTransaction = {
+  id: string;
+  amount: string;
+  category_name: string;
+  currency_name: string;
+  description: string;
+  frequency: RecurringTransactionType;
+  next_transaction_date: Date;
+  status: RecurringTransactionStatusType;
+};
+
 export type Transaction = {
   id: string;
   created_at: Date;

@@ -15,6 +15,7 @@ import CategoryCharts from "@/components/dashboard/category-charts";
 import { TransactionTabs } from "@/components/dashboard/transaction-tabs";
 import dayjs from "dayjs";
 import { redirect } from "next/navigation";
+import RecurringTransactionCard from "@/components/dashboard/recurring-transaction-card";
 
 // TODO: to hide/combine the pie proportions smaller than X%
 // TODO: interact between dashboard charts and transaction filter page
@@ -152,6 +153,11 @@ export default async function Page(props: {
               rates={currencyRates.rates}
               timeRange={timeRange}
             />
+          </Suspense>
+        </Col>
+        <Col span={12}>
+          <Suspense fallback={<CardSkeleton />}>
+            <RecurringTransactionCard title="Up-Coming Transactions"/>
           </Suspense>
         </Col>
       </Row>

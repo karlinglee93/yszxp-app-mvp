@@ -6,6 +6,7 @@ import {
   CurrencyRates,
   FormattedTransactionFormType,
   Ledgers,
+  RecurringTransaction,
   TotalAmountByCategoryType,
   TotalAmountByDateType,
   TransactionType,
@@ -413,6 +414,25 @@ const fetchTransactionById = async (id: string) => {
   }
 };
 
+const fetchRecurringTransactions = async () => {
+  try {
+    const transactions = await sql<RecurringTransaction>`
+      SELECT 
+        t.id, cat.category_name, t.amount, cur.currency_name, t.description, t.frequency, t.next_transaction_date, t.status
+      FROM recurring_transactions t
+      JOIN users u ON t.user_id = u.user_id
+      JOIN currencies cur ON t.currency_id = cur.currency_id
+      JOIN categories cat ON t.category_id = cat.category_id
+      JOIN ledgers l ON t.ledger_id = l.ledger_id
+      ORDER BY t.next_transaction_date ASC`;
+
+    return transactions.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch recurring transaction data.");
+  }
+};
+
 export {
   fetchCurrencies,
   fetchCategories,
@@ -434,4 +454,5 @@ export {
   fetchFilteredTransactions,
   fetchTransactionsCount,
   fetchTransactionById,
+  fetchRecurringTransactions,
 };
