@@ -66,12 +66,12 @@ export default function TransactionForm({
     }
   };
 
-  const handleSubmit = (values: TransactionFormType) => {
+  const handleSubmit = async (values: TransactionFormType) => {
     const formattedValues = {
       ...values,
       date: values.date.format("YYYY-MM-DD HH:mm:ss"),
     };
-    createTransaction(formattedValues);
+    await createTransaction(formattedValues);
   };
 
   return (

@@ -8,7 +8,12 @@ import {
 } from "@/components/skeletons";
 import { Col, Row } from "antd";
 import { Suspense } from "react";
-import { fetchCurrencyRates } from "@/lib/data";
+import {
+  fetchCategories,
+  fetchCurrencies,
+  fetchCurrencyRates,
+  fetchLedgers,
+} from "@/lib/data";
 import TransactionList from "@/components/dashboard/transaction-list";
 import { TransactionSortType, TransactionTypeType } from "@/lib/definitions";
 import CategoryCharts from "@/components/dashboard/category-charts";
@@ -41,6 +46,10 @@ export default async function Page(props: {
   const ledgerCurrency = "EUR";
   const currencyRates = await fetchCurrencyRates(ledgerCurrency);
   console.info(`Succeed to fetch currency rate on ${currencyRates.date}`);
+
+  const currencies = await fetchCurrencies();
+  const categories = await fetchCategories();
+  const ledgers = await fetchLedgers();
 
   const expenseChildren = (
     <div>
@@ -157,7 +166,12 @@ export default async function Page(props: {
         </Col>
         <Col span={12}>
           <Suspense fallback={<CardSkeleton />}>
-            <RecurringTransactionCard title="Up-Coming Transactions"/>
+            <RecurringTransactionCard
+              title="Up-Coming Transactions"
+              currencies={currencies}
+              categories={categories}
+              ledgers={ledgers}
+            />
           </Suspense>
         </Col>
       </Row>

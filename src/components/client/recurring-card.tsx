@@ -50,7 +50,7 @@ export default function ClientRecurringCard({
           <Button
             icon={<SettingOutlined />}
             onClick={() =>
-              messageApi.info(
+              messageApi.warning(
                 "The Configuration of Recurring Transactions is under development."
               )
             }

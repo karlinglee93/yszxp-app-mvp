@@ -5,6 +5,7 @@ import {
   RecurringTransactionStatusType,
   RecurringTransactionType,
 } from "./definitions";
+import { calculateNextRecurringDate } from "./utils";
 
 // TODO: secret user pwd
 const users = [
@@ -187,35 +188,6 @@ const transactions = rawTransactions.map((transaction) => ({
   currency_id: convertCurrencyToId(transaction["货币"]),
   description: transaction["备注"],
 }));
-
-const calculateNextRecurringDate = (
-  created_at: string,
-  frequency: RecurringTransactionType
-) => {
-  const today = new Date();
-  const curDate = new Date(created_at);
-
-  while (curDate <= today) {
-    switch (frequency) {
-      case RecurringTransactionType.DAILY:
-        curDate.setDate(curDate.getDate() + 1);
-        break;
-      case RecurringTransactionType.WEEKLY:
-        curDate.setDate(curDate.getDate() + 7);
-        break;
-      case RecurringTransactionType.MONTHLY:
-        curDate.setMonth(curDate.getMonth() + 1);
-        break;
-      case RecurringTransactionType.YEARLY:
-        curDate.setFullYear(curDate.getFullYear() + 1);
-        break;
-      default:
-        throw new Error("Invalid frequency type");
-    }
-  }
-
-  return curDate.toISOString();
-};
 
 const rawRecurringTransactions = [
   {

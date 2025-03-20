@@ -1,4 +1,4 @@
-import { TransactionType } from "./definitions";
+import { RecurringTransactionType, TransactionType } from "./definitions";
 
 export const formatAmount = (amount: number | string) => {
   const parsedAmount = typeof amount === "string" ? parseFloat(amount) : amount;
@@ -179,4 +179,33 @@ export const calculateTotalAmount = (
   );
 
   return totalAmount;
+};
+
+export const calculateNextRecurringDate = (
+  created_at: string,
+  frequency: RecurringTransactionType
+) => {
+  const today = new Date();
+  const curDate = new Date(created_at);
+
+  while (curDate <= today) {
+    switch (frequency) {
+      case RecurringTransactionType.DAILY:
+        curDate.setDate(curDate.getDate() + 1);
+        break;
+      case RecurringTransactionType.WEEKLY:
+        curDate.setDate(curDate.getDate() + 7);
+        break;
+      case RecurringTransactionType.MONTHLY:
+        curDate.setMonth(curDate.getMonth() + 1);
+        break;
+      case RecurringTransactionType.YEARLY:
+        curDate.setFullYear(curDate.getFullYear() + 1);
+        break;
+      default:
+        throw new Error("Invalid frequency type");
+    }
+  }
+
+  return curDate.toISOString();
 };
