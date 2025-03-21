@@ -1,4 +1,5 @@
-{/* <Flex justify="flex-end" align="center" style={{ height: "100%" }}>
+{
+  /* <Flex justify="flex-end" align="center" style={{ height: "100%" }}>
   <Select
     defaultValue="this_month"
     style={{ width: 120 }}
@@ -15,4 +16,8 @@
       { value: "custom", label: "Custom" },
     ]}
   />
-</Flex>; */}
+</Flex>; */
+}
+export default function Page() {
+  return <></>;
+}
