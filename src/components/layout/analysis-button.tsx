@@ -1,6 +1,6 @@
 "use client";
 import { AnalysisResult } from "@/lib/definitions";
-import { parseMarkdownJSON } from "@/lib/utils";
+import { tryParseJSON } from "@/lib/utils";
 import { BarChartOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -12,9 +12,44 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const { Title, Paragraph } = Typography;
+
+const AnalysisContent = ({ data }: { data: AnalysisResult }) => {
+  return (
+    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <Typography>
+        <Title level={4}>Overview</Title>
+        <Paragraph>{data.overview_summaries}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Income Insights</Title>
+        <Paragraph>{data.income_insights}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Spending Habits</Title>
+        <Paragraph>{data.spending_habits_analysis}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Unusual Activities</Title>
+        <Paragraph>{data.unusual_activity_alerts}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Savings Potential</Title>
+        <Paragraph>{data.savings_investment_potential}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Recommendations</Title>
+        <Paragraph>{data.personalized_recommendations}</Paragraph>
+        <Divider />
+
+        <Title level={4}>Forecast</Title>
+        <Paragraph>{data.predictive_analysis_forecast}</Paragraph>
+      </Typography>
+    </Space>
+  );
+};
 
 export default function AnalysisButton() {
   const [btnLoading, setBtnLoading] = useState(false);
@@ -22,6 +57,13 @@ export default function AnalysisButton() {
   const [analysisResult, setAnalysisResult] = useState<
     AnalysisResult | string | null
   >(null);
+
+  useEffect(() => {
+    const savedResult = sessionStorage.getItem("analysis-result");
+    if (savedResult) {
+      setAnalysisResult(tryParseJSON(savedResult));
+    }
+  }, []);
 
   const handleAnalysis = async () => {
     if (!analysisResult) {
@@ -31,8 +73,9 @@ export default function AnalysisButton() {
       try {
         const result = await fetch("/api/analysis");
         const data = await result.json();
-        const parsedData: AnalysisResult = parseMarkdownJSON(data.result);
-
+        sessionStorage.setItem("analysis-result", data.result);
+        const parsedData = tryParseJSON(data.result);
+        console.log("parsedData", parsedData)
         setAnalysisResult(parsedData);
       } catch (error) {
         setAnalysisResult(`Error generating analysis: ${error}`);
@@ -67,50 +110,9 @@ export default function AnalysisButton() {
             <Spin tip="Analyzing..." />
           </Flex>
         ) : typeof analysisResult === "string" ? (
-          <div style={{ color: "red" }}>{analysisResult}</div>
+          <Typography.Text type="danger">{analysisResult}</Typography.Text>
         ) : (
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Typography>
-              <Title level={4}>Overview</Title>
-              <Paragraph>{analysisResult.overview_summaries}</Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Income Insights</Title>
-              <Paragraph>{analysisResult.income_insights}</Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Spending Habits</Title>
-              <Paragraph>{analysisResult.spending_habits_analysis}</Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Unusual Activities</Title>
-              <Paragraph>{analysisResult.unusual_activity_alerts}</Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Savings Potential</Title>
-              <Paragraph>
-                {analysisResult.savings_investment_potential}
-              </Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Recommendations</Title>
-              <Paragraph>
-                {analysisResult.personalized_recommendations}
-              </Paragraph>
-
-              <Divider />
-
-              <Title level={4}>Forecast</Title>
-              <Paragraph>
-                {analysisResult.predictive_analysis_forecast}
-              </Paragraph>
-            </Typography>
-          </Space>
+          <AnalysisContent data={analysisResult} />
         )}
       </Drawer>
     </div>

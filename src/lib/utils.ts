@@ -1,4 +1,4 @@
-import { RecurringTransactionType, TransactionType } from "./definitions";
+import { AnalysisResult, RecurringTransactionType, TransactionType } from "./definitions";
 
 export const formatAmount = (amount: number | string) => {
   const parsedAmount = typeof amount === "string" ? parseFloat(amount) : amount;
@@ -210,11 +210,22 @@ export const calculateNextRecurringDate = (
   return curDate.toISOString();
 };
 
-export const parseMarkdownJSON = (raw: string) => {
-  return JSON.parse(
-    raw
-      .replace(/^```json\s*/, "")
-      .replace(/```$/, "")
-      .trim()
-  );
-};
+export function tryParseJSON(input: string | null) {
+  if (!input) return null;
+
+  try {
+    const parsed = JSON.parse(
+      input
+        .replace(/^```json\s*/, "")
+        .replace(/```$/, "")
+        .trim()
+    );
+
+    if (typeof parsed === "object" && parsed !== null) {
+      return parsed as AnalysisResult;
+    }
+    return input;
+  } catch {
+    return input;
+  }
+}
