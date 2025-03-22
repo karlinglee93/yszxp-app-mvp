@@ -59,14 +59,15 @@ async function seedCurrencies() {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await client.sql`CREATE TABLE IF NOT EXISTS "currencies" (
     "currency_id" uuid UNIQUE PRIMARY KEY NOT NULL,
-    "currency_name" varchar(255) NOT NULL
+    "currency_name" varchar(255) NOT NULL,
+    "currency_symbol" varchar(5)
   )`;
 
   const insertedCurrencies = await Promise.all(
     currencies.map(
       (currency) => client.sql`
-      INSERT INTO currencies (currency_id, currency_name)
-      VALUES (${currency.currency_id}, ${currency.currency_name})
+      INSERT INTO currencies (currency_id, currency_name, currency_symbol)
+      VALUES (${currency.currency_id}, ${currency.currency_name}, ${currency.currency_symbol})
       ON CONFLICT (currency_id) DO NOTHING
     `
     )

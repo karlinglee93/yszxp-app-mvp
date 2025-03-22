@@ -21,26 +21,31 @@ const currencies = [
     currency_id: uuidv4(),
     currency_name: "EUR",
     currency_name_cn: "欧元",
+    currency_symbol: "€",
   },
   {
     currency_id: uuidv4(),
     currency_name: "USD",
     currency_name_cn: "美元",
+    currency_symbol: "$",
   },
   {
     currency_id: uuidv4(),
     currency_name: "CNY",
     currency_name_cn: "人民币",
+    currency_symbol: "¥",
   },
   {
     currency_id: uuidv4(),
     currency_name: "GBP",
     currency_name_cn: "英镑",
+    currency_symbol: "£",
   },
   {
     currency_id: uuidv4(),
     currency_name: "JPY",
     currency_name_cn: "日元",
+    currency_symbol: "¥",
   },
 ];
 

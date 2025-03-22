@@ -2,7 +2,6 @@
 import {
   Categories,
   Currencies,
-  currencySymbols,
   Ledgers,
   TransactionFormType,
   TransactionTypeType,
@@ -36,16 +35,12 @@ export default function TransactionForm({
   const [form] = useForm();
   const router = useRouter();
 
-  const updatedCurrencies = currencies.map((currency) => ({
-    ...currency,
-    currency_symbol: currencySymbols[currency.currency_name] || "",
-  }));
   const selectBefore = (
     <Select
       defaultValue={ledgers.currency_id}
       onChange={(e) => form.setFieldValue("currency", e)}
     >
-      {updatedCurrencies.map((i) => (
+      {currencies.map((i) => (
         <Select.Option key={i.currency_name} value={i.currency_id}>
           {i.currency_name}&nbsp;
           {i.currency_symbol}

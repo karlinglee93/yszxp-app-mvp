@@ -3,7 +3,6 @@ import { updateTransaction } from "@/lib/actions";
 import {
   Categories,
   Currencies,
-  currencySymbols,
   FormattedTransactionFormType,
   TransactionFormType,
   TransactionTypeType,
@@ -44,16 +43,12 @@ export default function EditForm({
   const [form] = useForm();
   const router = useRouter();
 
-  const updatedCurrencies = currencies.map((currency) => ({
-    ...currency,
-    currency_symbol: currencySymbols[currency.currency_name] || "",
-  }));
   const selectBefore = (
     <Select
       defaultValue={currency}
       onChange={(e) => form.setFieldValue("currency", e)}
     >
-      {updatedCurrencies.map((i) => (
+      {currencies.map((i) => (
         <Select.Option key={i.currency_name} value={i.currency_id}>
           {i.currency_name}&nbsp;
           {i.currency_symbol}

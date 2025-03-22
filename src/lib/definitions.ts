@@ -1,13 +1,5 @@
 import { Dayjs } from "dayjs";
 
-export const currencySymbols: Record<string, string> = {
-  EUR: "€",
-  USD: "$",
-  CNY: "¥",
-  GBP: "£",
-  JPY: "¥",
-};
-
 // Manually define the types that will be returned from the database
 export enum TransactionTypeType {
   EXPENSE = "expense",
@@ -115,6 +107,7 @@ export interface CurrencyRates {
 export interface Currencies {
   currency_id: string;
   currency_name: string;
+  currency_symbol: string;
 }
 
 export interface Categories {
