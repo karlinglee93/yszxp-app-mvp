@@ -6,26 +6,14 @@ import "@/components/global.css";
 import SideNav from "@/components/dashboard/side-nav";
 import DatePicker from "@/components/layout/date-picker";
 import { usePathname } from "next/navigation";
-import { Button, Flex, Space, Tooltip } from "antd";
-import { OpenAIOutlined } from "@ant-design/icons";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Flex, Space } from "antd";
+import AnalysisButton from "@/components/layout/analysis-button";
 
 const { Sider, Header, Footer, Content } = Layout;
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const datePickerExistPathnames = ["/dashboard", "/dashboard/transactions"];
-  const handleAnalysisBtnClick = async () => {
-    const genAI = new GoogleGenerativeAI(
-      "AIzaSyAwDV3Hdj91oNQ1fsRwao1a4EGlwd0GL9k"
-    );
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
-
-    const prompt = "Explain how AI works";
-
-    const result = await model.generateContent(prompt);
-    console.log(result.response.text());
-  };
 
   return (
     <Layout>
@@ -59,16 +47,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               <DatePicker
                 hidden={!datePickerExistPathnames.includes(pathname)}
               />
-              <Tooltip title="Transactions Analysis">
-                <Button
-                  icon={<OpenAIOutlined />}
-                  color="primary"
-                  shape="round"
-                  onClick={handleAnalysisBtnClick}
-                >
-                  Analysis
-                </Button>
-              </Tooltip>
+              <AnalysisButton />
             </Space>
           </Flex>
         </Header>

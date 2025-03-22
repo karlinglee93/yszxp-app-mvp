@@ -209,3 +209,12 @@ export const calculateNextRecurringDate = (
 
   return curDate.toISOString();
 };
+
+export const parseMarkdownJSON = (raw: string) => {
+  return JSON.parse(
+    raw
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "")
+      .trim()
+  );
+};

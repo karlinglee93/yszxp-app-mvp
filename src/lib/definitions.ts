@@ -144,3 +144,14 @@ export interface FormattedTransactionFormType {
   date: string;
   note: string | undefined;
 }
+
+export type AnalysisResult = {
+  overview_summaries: string;
+  income_insights: string;
+  spending_habits_analysis: string;
+  unusual_activity_alerts: string;
+  savings_investment_potential: string;
+  personalized_recommendations: string;
+  predictive_analysis_forecast: string;
+  others?: string;
+};
