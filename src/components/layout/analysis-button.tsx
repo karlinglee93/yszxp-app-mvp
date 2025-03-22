@@ -75,7 +75,7 @@ export default function AnalysisButton() {
         const data = await result.json();
         sessionStorage.setItem("analysis-result", data.result);
         const parsedData = tryParseJSON(data.result);
-        console.log("parsedData", parsedData)
+        
         setAnalysisResult(parsedData);
       } catch (error) {
         setAnalysisResult(`Error generating analysis: ${error}`);

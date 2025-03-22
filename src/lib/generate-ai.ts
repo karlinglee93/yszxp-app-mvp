@@ -61,17 +61,15 @@ export async function fetchAnalysisFromGemini(summary: object) {
             Provide your entire analysis strictly as a JSON object with the following keys, where each key's value should be a clear, insightful, and complete response sentence or paragraph summarizing that specific section:
             
             {
-              "overview_summaries": "Your full sentence response for overview & summaries.",
-              "income_insights": "Your full sentence response for income insights.",
-              "spending_habits_analysis": "Your full sentence response for spending habits analysis.",
-              "unusual_activity_alerts": "Your full sentence response for unusual activities and alerts.",
-              "savings_investment_potential": "Your full sentence response for savings & investment potential.",
-              "personalized_recommendations": "Your full sentence response for personalized recommendations & insights.",
-              "predictive_analysis_forecast": "Your full sentence response for predictive analysis & future forecast."
-              "others": "Any additional important observations, insights, or notes you think are necessary or helpful to mention."
-            }
-            
-            Ensure each section is clear, concise, insightful, and provides practical value for improving the user's financial health and habits.
+              "overview_summaries": "Your full sentence response for overview & summaries within 50 words.",
+              "income_insights": "Your full sentence response for income insights within 50 words.",
+              "spending_habits_analysis": "Your full sentence response for spending habits analysis within 100 words.",
+              "unusual_activity_alerts": "Your full sentence response for unusual activities and alerts within 50 words.",
+              "savings_investment_potential": "Your full sentence response for savings & investment potential within 50 words.",
+              "personalized_recommendations": "Your full sentence response for personalized recommendations & insights within 100 words.",
+              "predictive_analysis_forecast": "Your full sentence response for predictive analysis & future forecast within 100 words."
+              "others": "Any additional important observations, insights, or notes you think are necessary or helpful to mention within 100 words."
+            }            
             `,
           },
         ],
