@@ -1,8 +1,10 @@
 "use client";
 import { TransactionType } from "@/lib/definitions";
 import { formatAmount } from "@/lib/utils";
-import { Avatar, List } from "antd";
+import { List, Tag } from "antd";
 import dayjs from "dayjs";
+import { CategoryIcon } from "../common/CategoryIcon";
+import { DollarTwoTone } from "@ant-design/icons";
 
 export default function ClientList({
   datasource,
@@ -18,18 +20,29 @@ export default function ClientList({
         <List.Item key={`avatar-wrap-${index}`}>
           <List.Item.Meta
             avatar={
-              <Avatar
-                src={`https://api.dicebear.com/7.x/icons/svg?seed=${index}`}
-              />
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shadow-sm">
+                <CategoryIcon
+                  symbol={
+                    datasource.find(
+                      (i) => i.category_name === item.category_name
+                    )?.category_symbol
+                  }
+                  className="w-4 h-4 text-blue-600"
+                />
+              </div>
             }
             title={item.category_name}
             description={item.description}
             key={`avatar-${index}`}
           />
           <List.Item key={`details-${index}`}>
-            {item.currency_name}
-            &nbsp;&nbsp;
-            {formatAmount(parseFloat(item.amount as string))}
+            <Tag
+              icon={<DollarTwoTone />}
+              color={Number(item.amount) < 0 ? "red" : "green"}
+            >
+              {item.currency_name} {item.currency_symbol}{" "}
+              {formatAmount(item.amount)}
+            </Tag>
           </List.Item>
           <List.Item key={`date-${index}`}>
             &nbsp;&nbsp;

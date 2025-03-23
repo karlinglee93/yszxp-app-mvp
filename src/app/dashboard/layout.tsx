@@ -1,8 +1,6 @@
 "use client";
 import Layout from "antd/lib/layout";
 
-import "@/components/global.css";
-
 import SideNav from "@/components/dashboard/side-nav";
 import DatePicker from "@/components/layout/date-picker";
 import { usePathname } from "next/navigation";

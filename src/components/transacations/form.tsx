@@ -15,12 +15,14 @@ import {
   InputNumber,
   Radio,
   Select,
+  Space,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
 import { createTransaction } from "@/lib/actions";
 import { useRouter } from "next/navigation";
+import { CategoryIcon } from "../common/CategoryIcon";
 
 export default function TransactionForm({
   currencies,
@@ -105,7 +107,15 @@ export default function TransactionForm({
             .filter((i) => i.type === type)
             .map((i) => (
               <Select.Option key={i.category_name} value={i.category_id}>
-                {i.category_name}
+                <Flex align="center">
+                  <Space>
+                    <CategoryIcon
+                      symbol={i.category_symbol}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <label>{i.category_name}</label>
+                  </Space>
+                </Flex>
               </Select.Option>
             ))}
         </Select>

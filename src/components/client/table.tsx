@@ -4,6 +4,7 @@ import { Transaction } from "@/lib/definitions";
 import { DeleteOutlined, DollarTwoTone, EditOutlined } from "@ant-design/icons";
 import {
   Button,
+  Flex,
   Pagination,
   Popconfirm,
   Space,
@@ -12,6 +13,7 @@ import {
   Tag,
 } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CategoryIcon } from "../common/CategoryIcon";
 
 const columns: TableProps["columns"] = [
   {
@@ -19,6 +21,20 @@ const columns: TableProps["columns"] = [
     dataIndex: "created_at",
     key: "created_at",
     render: (item) => new Date(item).toISOString().split("T")[0],
+  },
+  {
+    title: "Currency",
+    dataIndex: "currency_name",
+    key: "currency_name",
+    render: (currency_name, record) => (
+      <Flex>
+        <Space>
+          <DollarTwoTone />
+          <label>{currency_name}</label>
+          <label>{record.currency_symbol}</label>
+        </Space>
+      </Flex>
+    ),
   },
   {
     title: "Amount",
@@ -32,20 +48,20 @@ const columns: TableProps["columns"] = [
       ),
   },
   {
-    title: "Currency",
-    dataIndex: "currency_name",
-    key: "currency_name",
-    render: (currency_name) => (
-      <Tag icon={<DollarTwoTone />} color="green">
-        {currency_name}
-      </Tag>
-    ),
-  },
-  {
     title: "Category",
     dataIndex: "category_name",
     key: "category_name",
-    render: (category) => <Tag color="gold">{category}</Tag>,
+    render: (category, record) => (
+      <Flex align="center">
+        <Space>
+          <CategoryIcon
+            symbol={record.category_symbol}
+            className="w-4 h-4 text-blue-600"
+          />
+          <label>{category}</label>
+        </Space>
+      </Flex>
+    ),
   },
   {
     title: "Description",

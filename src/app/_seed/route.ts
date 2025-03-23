@@ -83,14 +83,15 @@ async function seedCategories() {
     "category_id" uuid UNIQUE PRIMARY KEY NOT NULL,
     "category_name" varchar(255) NOT NULL,
     "type" category_type NOT NULL,
-    "is_shared" bool NOT NULL DEFAULT false
+    "is_shared" bool NOT NULL DEFAULT false,
+    "category_symbol" varchar(50)
   )`;
 
   const insertedCategories = await Promise.all(
     categories.map(
       (category) => client.sql`
-      INSERT INTO categories (category_id, category_name, type, is_shared)
-      VALUES (${category.category_id}, ${category.category_name}, ${category.type}, ${category.is_shared})
+      INSERT INTO categories (category_id, category_name, type, is_shared, category_symbol)
+      VALUES (${category.category_id}, ${category.category_name}, ${category.type}, ${category.is_shared}, ${category.category_symbol})
       ON CONFLICT (category_id) DO NOTHING
     `
     )

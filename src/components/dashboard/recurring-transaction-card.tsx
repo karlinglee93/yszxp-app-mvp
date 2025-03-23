@@ -1,14 +1,8 @@
 import { fetchRecurringTransactions } from "@/lib/data";
 import ClientRecurringCard from "../client/recurring-card";
 import dayjs from "dayjs";
-import {
-  processRecurringTransactions,
-} from "@/lib/actions";
-import {
-  Categories,
-  Currencies,
-  Ledgers,
-} from "@/lib/definitions";
+import { processRecurringTransactions } from "@/lib/actions";
+import { Categories, Currencies, Ledgers } from "@/lib/definitions";
 
 export default async function RecurringTransactionCard({
   title,

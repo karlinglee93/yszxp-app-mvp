@@ -75,7 +75,7 @@ async function fetchTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
-      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+      t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -95,7 +95,7 @@ async function fetchLatestExpenseTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
-      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+      t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -117,7 +117,7 @@ async function fetchTopExpenseTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
-      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+      t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -139,7 +139,7 @@ async function fetchLatestIncomeTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
-      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+      t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -161,7 +161,7 @@ async function fetchTopIncomeTransactions(timeRange: string) {
   try {
     const transactions = await sql<TransactionType>`
       SELECT 
-      t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+      t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -344,7 +344,7 @@ async function fetchFilteredTransactions(
   try {
     const filteredTransactions = await sql<TransactionType>`
       SELECT 
-        t.id, t.created_at, cat.category_name, t.amount, cur.currency_name, t.description
+        t.id, t.created_at, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id
@@ -418,7 +418,7 @@ const fetchRecurringTransactions = async () => {
   try {
     const transactions = await sql<RecurringTransaction>`
       SELECT 
-        t.id, cat.category_name, t.amount, cur.currency_name, t.description, t.frequency, t.next_transaction_date, t.status
+        t.id, cat.category_name, cat.category_symbol, t.amount, cur.currency_name, cur.currency_symbol, t.description, t.frequency, t.next_transaction_date, t.status
       FROM recurring_transactions t
       JOIN users u ON t.user_id = u.user_id
       JOIN currencies cur ON t.currency_id = cur.currency_id

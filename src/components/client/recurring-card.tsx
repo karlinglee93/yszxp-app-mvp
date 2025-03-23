@@ -1,8 +1,9 @@
 "use client";
 import { RecurringTransaction } from "@/lib/definitions";
 import { DollarTwoTone, SettingOutlined } from "@ant-design/icons";
-import { Button, Card, message, Table, Tag } from "antd";
+import { Button, Card, Flex, message, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
+import { CategoryIcon } from "../common/CategoryIcon";
 
 export default function ClientRecurringCard({
   title,
@@ -21,7 +22,20 @@ export default function ClientRecurringCard({
     {
       title: "Category",
       dataIndex: "category_name",
-      render: (value: string) => <Tag color="gold">{value}</Tag>,
+      render: (value: string) => (
+        <Flex align="center">
+          <Space>
+            <CategoryIcon
+              symbol={
+                datasource.find((i) => i.category_name === value)
+                  ?.category_symbol
+              }
+              className="w-4 h-4 text-blue-600"
+            />
+            <label>{value}</label>
+          </Space>
+        </Flex>
+      ),
     },
     {
       title: "Amount",
@@ -31,7 +45,7 @@ export default function ClientRecurringCard({
           icon={<DollarTwoTone />}
           color={Number(value) < 0 ? "red" : "green"}
         >
-          {record.currency_name} {value}
+          {record.currency_name} {record.currency_symbol} {value}
         </Tag>
       ),
     },

@@ -35,6 +35,8 @@ export type RecurringTransaction = {
   amount: string;
   category_name: string;
   currency_name: string;
+  category_symbol: string;
+  currency_symbol: string;
   description: string;
   frequency: RecurringTransactionType;
   next_transaction_date: Date;
@@ -63,6 +65,8 @@ export type TransactionType = {
   category_name: string;
   currency_name: string;
   description: string;
+  category_symbol: string;
+  currency_symbol: string;
 };
 
 export type TotalAmountByDateType = {
@@ -114,6 +118,7 @@ export interface Categories {
   category_id: string;
   category_name: string;
   type: TransactionTypeType;
+  category_symbol: string;
 }
 
 export interface Ledgers {
