@@ -1,7 +1,7 @@
 "use client";
 import { deleteTransaction } from "@/lib/actions";
 import { Transaction } from "@/lib/definitions";
-import { DeleteOutlined, DollarTwoTone, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DollarOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   Flex,
@@ -29,7 +29,7 @@ const columns: TableProps["columns"] = [
     render: (currency_name, record) => (
       <Flex>
         <Space>
-          <DollarTwoTone />
+          <DollarOutlined style={{color: "green"}} />
           <label>{currency_name}</label>
           <label>{record.currency_symbol}</label>
         </Space>

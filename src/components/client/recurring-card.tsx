@@ -1,6 +1,6 @@
 "use client";
 import { RecurringTransaction } from "@/lib/definitions";
-import { DollarTwoTone, SettingOutlined } from "@ant-design/icons";
+import { DollarOutlined, SettingOutlined } from "@ant-design/icons";
 import { Button, Card, Flex, message, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 import { CategoryIcon } from "../common/CategoryIcon";
@@ -42,7 +42,7 @@ export default function ClientRecurringCard({
       dataIndex: "amount",
       render: (value: string, record: RecurringTransaction) => (
         <Tag
-          icon={<DollarTwoTone />}
+          icon={<DollarOutlined style={{color: "green"}} />}
           color={Number(value) < 0 ? "red" : "green"}
         >
           {record.currency_name} {record.currency_symbol} {value}

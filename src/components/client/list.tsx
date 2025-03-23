@@ -4,7 +4,7 @@ import { formatAmount } from "@/lib/utils";
 import { List, Tag } from "antd";
 import dayjs from "dayjs";
 import { CategoryIcon } from "../common/CategoryIcon";
-import { DollarTwoTone } from "@ant-design/icons";
+import { DollarOutlined } from "@ant-design/icons";
 
 export default function ClientList({
   datasource,
@@ -37,7 +37,7 @@ export default function ClientList({
           />
           <List.Item key={`details-${index}`}>
             <Tag
-              icon={<DollarTwoTone />}
+              icon={<DollarOutlined style={{color: "green"}} />}
               color={Number(item.amount) < 0 ? "red" : "green"}
             >
               {item.currency_name} {item.currency_symbol}{" "}
