@@ -64,7 +64,7 @@ const columns: TableProps["columns"] = [
     ),
   },
   {
-    title: "Description",
+    title: "Note",
     dataIndex: "description",
     key: "description",
   },

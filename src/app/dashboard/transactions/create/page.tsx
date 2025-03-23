@@ -1,5 +1,7 @@
+import { TransactionFormSkeleton } from "@/components/skeletons";
 import TransactionForm from "@/components/transacations/form";
 import { fetchCategories, fetchCurrencies, fetchLedgers } from "@/lib/data";
+import { Suspense } from "react";
 
 export default async function Page() {
   const currencies = await fetchCurrencies();
@@ -8,11 +10,13 @@ export default async function Page() {
 
   return (
     <main>
-      <TransactionForm
-        currencies={currencies}
-        categories={categories}
-        ledgers={ledgers}
-      />
+      <Suspense fallback={<TransactionFormSkeleton />}>
+        <TransactionForm
+          currencies={currencies}
+          categories={categories}
+          ledgers={ledgers}
+        />
+      </Suspense>
     </main>
   );
 }

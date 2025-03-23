@@ -1,28 +1,51 @@
 // TODO: enhance skeletions
-export const DashboardSkeleton = () => {
-  return <div>Loading Dashboard</div>;
-};
+"use client";
+import { Skeleton, Card, Table, Form } from "antd";
 
-export const TransactionsSkeleton = () => {
-  return <div>Loading Transactions</div>;
-};
+export function CardSkeleton() {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </Card>
+  );
+}
 
-export const CardSkeleton = () => {
-  return <div>Loading Card</div>;
-};
+export function LineChartSkeleton() {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <Skeleton active title={false} paragraph={{ rows: 6 }} />
+    </Card>
+  );
+}
 
-export const LineChartSkeleton = () => {
-  return <div>Loading Line Chart</div>;
-};
+export function PieChartSkeleton() {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <Skeleton active title={false} paragraph={{ rows: 4 }} />
+    </Card>
+  );
+}
 
-export const PieChartSkeleton = () => {
-  return <div>Loading Pie Chart</div>;
-};
+export function ListSkeleton() {
+  return (
+    <Card style={{ marginBottom: 16 }}>
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </Card>
+  );
+}
 
-export const ListSkeleton = () => {
-  return <div>Loading List</div>;
+export const TransactionFormSkeleton = () => {
+  return (
+    <Form>
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </Form>
+  );
 };
 
 export const TransactionTableSkeleton = () => {
-  return <div>Loading Transaction Table</div>;
+  return (
+    <Table>
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </Table>
+  );
 };

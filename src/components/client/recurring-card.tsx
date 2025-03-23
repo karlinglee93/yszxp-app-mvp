@@ -16,11 +16,26 @@ export default function ClientRecurringCard({
   const columns = [
     {
       title: "Date",
+      key: "date",
       dataIndex: "next_transaction_date",
       render: (value: string) => dayjs(value).format("YYYY-MM-DD"),
     },
     {
+      title: "Amount",
+      key: "amount",
+      dataIndex: "amount",
+      render: (value: string, record: RecurringTransaction) => (
+        <Tag
+          icon={<DollarOutlined style={{ color: "green" }} />}
+          color={Number(value) < 0 ? "red" : "green"}
+        >
+          {record.currency_name} {record.currency_symbol} {value}
+        </Tag>
+      ),
+    },
+    {
       title: "Category",
+      key: "category",
       dataIndex: "category_name",
       render: (value: string) => (
         <Flex align="center">
@@ -38,19 +53,8 @@ export default function ClientRecurringCard({
       ),
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      render: (value: string, record: RecurringTransaction) => (
-        <Tag
-          icon={<DollarOutlined style={{color: "green"}} />}
-          color={Number(value) < 0 ? "red" : "green"}
-        >
-          {record.currency_name} {record.currency_symbol} {value}
-        </Tag>
-      ),
-    },
-    {
       title: "Note",
+      key: "note",
       dataIndex: "description",
     },
   ];

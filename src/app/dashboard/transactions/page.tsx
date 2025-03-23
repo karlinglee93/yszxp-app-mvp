@@ -1,9 +1,11 @@
+import { TransactionTableSkeleton } from "@/components/skeletons";
 import TransactionAddButton from "@/components/transacations/add-button";
 import TransactionSearch from "@/components/transacations/transaction-search";
 import TransactionTable from "@/components/transacations/transaction-table";
-import { Col, Flex, Row } from "antd";
+import { Col, Flex, Row, Space } from "antd";
 import dayjs from "dayjs";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -28,19 +30,23 @@ export default async function Page(props: {
       <Row>
         <Col span={24}>
           <Flex>
-            <TransactionSearch />
-            <TransactionAddButton />
+            <Space>
+              <TransactionSearch />
+              <TransactionAddButton />
+            </Space>
           </Flex>
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-          <TransactionTable
-            query={query}
-            timeRange={timeRange}
-            page={currentPage}
-            category={category}
-          />
+          <Suspense fallback={<TransactionTableSkeleton />}>
+            <TransactionTable
+              query={query}
+              timeRange={timeRange}
+              page={currentPage}
+              category={category}
+            />
+          </Suspense>
         </Col>
       </Row>
     </div>
