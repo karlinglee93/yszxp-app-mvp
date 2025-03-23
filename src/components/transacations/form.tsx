@@ -75,10 +75,9 @@ export default function TransactionForm({
     <Form
       form={form}
       onFinish={handleSubmit}
-      labelCol={{ span: 4 }}
+      layout="vertical"
+      style={{ maxWidth: 600, width: "100%" }}
       wrapperCol={{ span: 14 }}
-      layout="horizontal"
-      style={{ maxWidth: 600 }}
       initialValues={{
         type: TransactionTypeType.EXPENSE,
         date: dayjs(),
@@ -137,7 +136,7 @@ export default function TransactionForm({
         <Input placeholder="Input notes" />
       </Form.Item>
       <Form.Item label={null}>
-        <Flex justify="end">
+        <Flex justify="end" gap={8}>
           <Button type="default" onClick={() => router.back()}>
             Cancel
           </Button>

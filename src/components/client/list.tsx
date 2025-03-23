@@ -17,10 +17,10 @@ export default function ClientList({
       itemLayout="horizontal"
       dataSource={datasource}
       renderItem={(item, index) => (
-        <List.Item key={`avatar-wrap-${index}`}>
+        <List.Item key={index} className="transaction-item">
           <List.Item.Meta
             avatar={
-              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shadow-sm">
+              <div className="icon-avatar">
                 <CategoryIcon
                   symbol={
                     datasource.find(
@@ -31,23 +31,27 @@ export default function ClientList({
                 />
               </div>
             }
-            title={item.category_name}
-            description={item.description}
-            key={`avatar-${index}`}
+            title={
+              <span className="transaction-title">{item.category_name}</span>
+            }
+            description={
+              <div className="transaction-meta">
+                <span>{item.description}</span>
+                <span className="transaction-date">
+                  {dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}
+                </span>
+              </div>
+            }
           />
-          <List.Item key={`details-${index}`}>
+          <div className="transaction-amount">
             <Tag
-              icon={<DollarOutlined style={{color: "green"}} />}
+              icon={<DollarOutlined />}
               color={Number(item.amount) < 0 ? "red" : "green"}
             >
               {item.currency_name} {item.currency_symbol}{" "}
               {formatAmount(item.amount)}
             </Tag>
-          </List.Item>
-          <List.Item key={`date-${index}`}>
-            &nbsp;&nbsp;
-            {dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}
-          </List.Item>
+          </div>
         </List.Item>
       )}
     />

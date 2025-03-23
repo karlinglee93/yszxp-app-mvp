@@ -85,8 +85,8 @@ export default function EditForm({
       onFinish={handleSubmit}
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 14 }}
-      layout="horizontal"
-      style={{ maxWidth: 600 }}
+      layout="vertical"
+      style={{ maxWidth: 600, width: "100%" }}
       initialValues={{
         type: initialType,
         category: category,
@@ -148,7 +148,7 @@ export default function EditForm({
         <Input placeholder="Input notes" />
       </Form.Item>
       <Form.Item label={null}>
-        <Flex justify="end">
+        <Flex justify="end" gap={8}>
           <Button type="default" onClick={() => router.back()}>
             Cancel
           </Button>

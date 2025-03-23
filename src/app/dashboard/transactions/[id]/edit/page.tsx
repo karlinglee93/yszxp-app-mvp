@@ -18,15 +18,17 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   ]);
 
   return (
-    <main>
-      <Suspense fallback={<TransactionFormSkeleton />}>
-        <EditForm
-          id={id}
-          transaction={transaction}
-          currencies={currencies}
-          categories={categories}
-        />
-      </Suspense>
+    <main className="transaction-form-page">
+      <div className="card">
+        <Suspense fallback={<TransactionFormSkeleton />}>
+          <EditForm
+            id={id}
+            transaction={transaction}
+            currencies={currencies}
+            categories={categories}
+          />
+        </Suspense>
+      </div>
     </main>
   );
 }

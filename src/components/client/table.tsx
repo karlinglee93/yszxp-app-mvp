@@ -1,7 +1,11 @@
 "use client";
 import { deleteTransaction } from "@/lib/actions";
 import { Transaction } from "@/lib/definitions";
-import { DeleteOutlined, DollarOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DollarOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Flex,
@@ -11,6 +15,7 @@ import {
   Table,
   TableProps,
   Tag,
+  Tooltip,
 } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryIcon } from "../common/CategoryIcon";
@@ -29,7 +34,7 @@ const columns: TableProps["columns"] = [
     render: (currency_name, record) => (
       <Flex>
         <Space>
-          <DollarOutlined style={{color: "green"}} />
+          <DollarOutlined style={{ color: "green" }} />
           <label>{currency_name}</label>
           <label>{record.currency_symbol}</label>
         </Space>
@@ -40,12 +45,13 @@ const columns: TableProps["columns"] = [
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
-    render: (amount) =>
-      (amount as number) < 0 ? (
-        <Tag color="red">{amount}</Tag>
-      ) : (
-        <Tag color="green">{amount}</Tag>
-      ),
+    render: (amount) => (
+      <div style={{ textAlign: "left" }}>
+        <Tag color={amount < 0 ? "red" : "green"}>
+          {amount < 0 ? "-" : "+"} {Math.abs(amount)}
+        </Tag>
+      </div>
+    ),
   },
   {
     title: "Category",
@@ -73,20 +79,24 @@ const columns: TableProps["columns"] = [
     key: "action",
     render: (_, record) => (
       <Space size="middle">
-        <Button
-          type="link"
-          href={`/dashboard/transactions/${record.id}/edit`}
-          icon={<EditOutlined />}
-        />
-        <Popconfirm
-          title="Delete the transaction"
-          description="Are you sure to delete this transaction?"
-          onConfirm={() => deleteTransaction(record.id)}
-          okText="Yes"
-          cancelText="Cancel"
-        >
-          <Button danger type="link" icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <Tooltip title="Edit">
+          <Button
+            type="link"
+            href={`/dashboard/transactions/${record.id}/edit`}
+            icon={<EditOutlined />}
+          />
+        </Tooltip>
+        <Tooltip title="Delete">
+          <Popconfirm
+            title="Delete the transaction"
+            description="Are you sure to delete this transaction?"
+            onConfirm={() => deleteTransaction(record.id)}
+            okText="Yes"
+            cancelText="Cancel"
+          >
+            <Button danger type="link" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Tooltip>
       </Space>
     ),
   },
@@ -112,16 +122,17 @@ export default function ClientTable({
   return (
     <div>
       <Table columns={columns} dataSource={datasource} pagination={false} />
-      <Pagination
-        align="center"
-        current={currentPage}
-        showTotal={(total, range) =>
-          `${range[0]}-${range[1]} of ${total} items`
-        }
-        showSizeChanger={false}
-        total={totalCount}
-        onChange={handlePaginationChange}
-      />
+      <div className="pagination-wrapper">
+        <Pagination
+          current={currentPage}
+          showTotal={(total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`
+          }
+          showSizeChanger={false}
+          total={totalCount}
+          onChange={handlePaginationChange}
+        />
+      </div>
     </div>
   );
 }

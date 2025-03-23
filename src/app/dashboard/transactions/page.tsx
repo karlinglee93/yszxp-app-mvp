@@ -2,7 +2,7 @@ import { TransactionTableSkeleton } from "@/components/skeletons";
 import TransactionAddButton from "@/components/transacations/add-button";
 import TransactionSearch from "@/components/transacations/transaction-search";
 import TransactionTable from "@/components/transacations/transaction-table";
-import { Col, Flex, Row, Space } from "antd";
+import { Col, Row } from "antd";
 import dayjs from "dayjs";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -26,15 +26,13 @@ export default async function Page(props: {
   const currentPage = Number(searchParams?.page) || 1;
 
   return (
-    <div>
+    <div className="transactions-page">
       <Row>
         <Col span={24}>
-          <Flex>
-            <Space>
-              <TransactionSearch />
-              <TransactionAddButton />
-            </Space>
-          </Flex>
+          <div className="toolbar">
+            <TransactionSearch />
+            <TransactionAddButton />
+          </div>
         </Col>
       </Row>
       <Row>

@@ -4,7 +4,7 @@ import Layout from "antd/lib/layout";
 import SideNav from "@/components/dashboard/side-nav";
 import DatePicker from "@/components/layout/date-picker";
 import { usePathname } from "next/navigation";
-import { Flex, Space } from "antd";
+import { Flex } from "antd";
 import AnalysisButton from "@/components/layout/analysis-button";
 
 const { Sider, Header, Footer, Content } = Layout;
@@ -28,25 +28,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <SideNav />
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
-        <Header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            background: "#fff",
-          }}
-        >
+        <Header className="custom-header">
           {/* TODO: enhance to display the oldest data if the timerange is too long */}
-          <Flex align="center">
-            <Space>
-              <DatePicker
-                hidden={!datePickerExistPathnames.includes(pathname)}
-              />
-              <AnalysisButton />
-            </Space>
+          <Flex
+            align="center"
+            justify="space-between"
+            style={{ width: "100%" }}
+          >
+            <DatePicker hidden={!datePickerExistPathnames.includes(pathname)} />
+            <AnalysisButton />
           </Flex>
         </Header>
         <Content

@@ -112,8 +112,8 @@ export default async function TransactionLineChart({
   return (
     <Card title={title}>
       <Flex vertical>
-        <label>{averageAmountText}</label>
-        <label>{countText}</label>
+        <div className="stat-label">{averageAmountText}</div>
+        <div className="stat-label">{countText}</div>
       </Flex>
       <ClientLineChart datasource={completedData} isMonthQuery={isMonthQuery} />
     </Card>

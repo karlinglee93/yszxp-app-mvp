@@ -40,13 +40,14 @@ export default function ClientRecurringCard({
       render: (value: string) => (
         <Flex align="center">
           <Space>
-            <CategoryIcon
-              symbol={
-                datasource.find((i) => i.category_name === value)
-                  ?.category_symbol
-              }
-              className="w-4 h-4 text-blue-600"
-            />
+            <div className="icon-avatar">
+              <CategoryIcon
+                symbol={
+                  datasource.find((i) => i.category_name === value)
+                    ?.category_symbol
+                }
+              />
+            </div>
             <label>{value}</label>
           </Space>
         </Flex>

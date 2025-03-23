@@ -9,14 +9,16 @@ export default async function Page() {
   const ledgers = await fetchLedgers();
 
   return (
-    <main>
-      <Suspense fallback={<TransactionFormSkeleton />}>
-        <TransactionForm
-          currencies={currencies}
-          categories={categories}
-          ledgers={ledgers}
-        />
-      </Suspense>
+    <main className="transaction-form-page">
+      <div className="card">
+        <Suspense fallback={<TransactionFormSkeleton />}>
+          <TransactionForm
+            currencies={currencies}
+            categories={categories}
+            ledgers={ledgers}
+          />
+        </Suspense>
+      </div>
     </main>
   );
 }

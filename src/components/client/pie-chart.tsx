@@ -80,6 +80,10 @@ export default function ClientPieChart({
           formatAmount(amount.total_amount) / totalExpense
         )}%`,
       position: "spider",
+      style: {
+        fill: "#666",
+        fontSize: 12,
+      },
     },
     legend: {
       color: {
@@ -120,7 +124,7 @@ export default function ClientPieChart({
   return (
     <div>
       {contextHolder}
-      <Pie data={formatedData} {...config} legend={legend} height={244} />
+      <Pie data={formatedData} {...config} legend={legend} height={252} />
     </div>
   );
 }

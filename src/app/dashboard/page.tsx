@@ -153,7 +153,7 @@ export default async function Page(props: {
   );
 
   return (
-    <main>
+    <main className="dashboard-content">
       <Row>
         <Col span={12}>
           <Suspense fallback={<CardSkeleton />}>
