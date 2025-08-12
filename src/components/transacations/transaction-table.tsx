@@ -1,5 +1,6 @@
 import ClientTable from "@/components/client/table";
 import { fetchFilteredTransactions, fetchTransactionsCount } from "@/lib/data";
+import { Suspense } from "react";
 
 export default async function TransactionTable({
   query,
@@ -29,8 +30,8 @@ export default async function TransactionTable({
   }
 
   return (
-    <div>
+    <Suspense fallback={null}>
       <ClientTable datasource={filteredTransactions} totalCount={totalCount} />
-    </div>
+    </Suspense>
   );
 }

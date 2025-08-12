@@ -30,8 +30,10 @@ export default async function Page(props: {
       <Row>
         <Col span={24}>
           <div className="toolbar">
-            <TransactionSearch />
-            <TransactionAddButton />
+            <Suspense fallback={null}>
+              <TransactionSearch />
+              <TransactionAddButton />
+            </Suspense>
           </div>
         </Col>
       </Row>

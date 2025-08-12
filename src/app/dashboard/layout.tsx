@@ -2,10 +2,11 @@
 import Layout from "antd/lib/layout";
 
 import SideNav from "@/components/dashboard/side-nav";
-import DatePicker from "@/components/layout/date-picker";
+import CustomDatePicker from "@/components/layout/date-picker";
 import { usePathname } from "next/navigation";
 import { Flex } from "antd";
 import AnalysisButton from "@/components/layout/analysis-button";
+import { Suspense } from "react";
 
 const { Sider, Header, Footer, Content } = Layout;
 
@@ -25,7 +26,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           zIndex: 1000,
         }}
       >
-        <SideNav />
+        <Suspense fallback={null}>
+          <SideNav />
+        </Suspense>
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
         <Header className="custom-header">
@@ -35,8 +38,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             justify="space-between"
             style={{ width: "100%" }}
           >
-            <DatePicker hidden={!datePickerExistPathnames.includes(pathname)} />
-            <AnalysisButton />
+            <Suspense fallback={null}>
+              <CustomDatePicker
+                hidden={!datePickerExistPathnames.includes(pathname)}
+              />
+              <div style={{ color: "red" }}>
+                Tip: For the best demo experience, please select March 2025 in
+                the date picker.
+              </div>
+              <AnalysisButton />
+            </Suspense>
           </Flex>
         </Header>
         <Content
